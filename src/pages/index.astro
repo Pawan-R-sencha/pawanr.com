@@ -17,8 +17,7 @@ import Layout from '../layouts/Layout.astro';
         <p class="greeting">Namaste <span>🙏</span></p>
 
         <h1>
-          Offensive Security
-          <span>|</span>
+          <span class="headline-first">Offensive Security |</span>
           Curious Mind
           <span class="tagline">Learning, Building, Explaining How Things Work</span>
         </h1>
@@ -182,9 +181,11 @@ import Layout from '../layouts/Layout.astro';
     max-width: 800px;
   }
 
-  h1 span:not(.tagline) {
+  .headline-first {
+    white-space: nowrap;
+    display: inline-block;
     color: #4da6ff;
-    margin: 0 0.15em;
+    margin-right: 0.15em;
   }
 
   h1 .tagline {

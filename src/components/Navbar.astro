@@ -1,0 +1,72 @@
+---
+interface Props {
+  activePage?: 'home' | 'journey' | 'writeups' | 'contact';
+}
+
+const { activePage } = Astro.props;
+---
+
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="/" class="logo">Pawan R</a>
+
+    <div class="nav-links">
+      <a href="/journey/" class={activePage === 'journey' ? 'active' : ''}>My Journey</a>
+      <a href="/writeups/" class={activePage === 'writeups' ? 'active' : ''}>Write-ups</a>
+      <a href="/contact/" class={activePage === 'contact' ? 'active' : ''}>Contact</a>
+    </div>
+  </div>
+</nav>
+
+<style>
+  .navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+  }
+
+  .nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 25px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    color: #f5f7fa;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 28px;
+  }
+
+  .nav-links a {
+    color: #aebdcc;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active {
+    color: #4da6ff;
+  }
+
+  @media (max-width: 800px) {
+    .nav-links {
+      display: none;
+    }
+
+    .nav-container {
+      padding: 20px;
+    }
+  }
+</style>

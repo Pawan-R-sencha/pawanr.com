@@ -1,0 +1,88 @@
+```astro
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+---
+
+<Layout>
+  <Navbar activePage="writeups" />
+
+  <main>
+    <section class="writeups-page">
+      <div class="writeups-content">
+        <p class="section-label">WRITINGS</p>
+
+        <h1>Write-ups are<br /><span>coming soon.</span></h1>
+
+        <p class="intro">
+          I'm currently working on documenting things I'm learning,
+          exploring, and building along the way.
+        </p>
+
+        <p class="closing">
+          Technical write-ups, thoughts, reviews, and other writings
+          will be added here soon.
+        </p>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .writeups-page {
+    min-height: 75vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px;
+  }
+
+  .writeups-content {
+    max-width: 760px;
+    text-align: center;
+  }
+
+  .section-label {
+    margin-bottom: 24px;
+    color: #5b9cff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+  }
+
+  h1 span {
+    color: #5b9cff;
+  }
+
+  .intro {
+    max-width: 620px;
+    margin: 32px auto 0;
+    color: #aeb8c7;
+    font-size: 1.1rem;
+    line-height: 1.8;
+  }
+
+  .closing {
+    margin-top: 36px;
+    color: #697586;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 600px) {
+    .writeups-page {
+      padding: 60px 20px;
+    }
+
+    .intro {
+      font-size: 1rem;
+    }
+  }
+</style>
+```

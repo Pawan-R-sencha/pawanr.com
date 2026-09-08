@@ -1,0 +1,137 @@
+---
+const sections = [
+  {
+    title: 'CYBERSECURITY',
+    groups: [
+      {
+        title: 'Network Security',
+        items: [
+          {
+            name: 'FTP',
+            href: '/writeups/ftp/',
+          },
+        ],
+      },
+    ],
+  },
+];
+---
+
+<aside class="writeup-sidebar" id="writeup-sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-label">WRITEUPS</span>
+  </div>
+
+  <nav aria-label="Write-up navigation">
+    {sections.map((section) => (
+      <div class="section">
+        <div class="section-title">{section.title}</div>
+
+        {section.groups.map((group) => (
+          <div class="group">
+            <div class="group-title">{group.title}</div>
+
+            <div class="items">
+              {group.items.map((item) => (
+                <a href={item.href}>{item.name}</a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    ))}
+  </nav>
+</aside>
+
+<style>
+  .writeup-sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    padding: 32px 20px;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    box-sizing: border-box;
+    transition:
+      width 0.25s ease,
+      padding 0.25s ease,
+      opacity 0.2s ease;
+  }
+
+  .sidebar-header {
+    margin-bottom: 32px;
+  }
+
+  .sidebar-label {
+    color: #5b9cff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+  }
+
+  .section {
+    margin-bottom: 36px;
+  }
+
+  .section-title {
+    margin-bottom: 18px;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+
+  .group {
+    margin-bottom: 18px;
+  }
+
+  .group-title {
+    margin-bottom: 8px;
+    color: #8d98a8;
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  .items {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding-left: 12px;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .items a {
+    padding: 6px 10px;
+    color: #697586;
+    font-size: 0.82rem;
+    text-decoration: none;
+    border-radius: 4px;
+    transition:
+      color 0.2s ease,
+      background 0.2s ease;
+  }
+
+  .items a:hover {
+    color: #ffffff;
+    background: rgba(91, 156, 255, 0.08);
+  }
+
+  @media (max-width: 900px) {
+    .writeup-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 40;
+      width: 280px;
+      height: 100vh;
+      padding: 100px 24px 32px;
+      background: #080b10;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 12px 0 40px rgba(0, 0, 0, 0.35);
+      transform: translateX(-100%);
+      transition: transform 0.25s ease;
+    }
+
+    .writeup-sidebar.is-open {
+      transform: translateX(0);
+    }
+  }
+</style>

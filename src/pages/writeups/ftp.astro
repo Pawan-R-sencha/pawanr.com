@@ -1,0 +1,23 @@
+---
+import { getCollection, render } from 'astro:content';
+import WriteupLayout from '../../components/writeups/WriteupLayout.astro';
+
+const writeups = await getCollection('writeups');
+
+const writeup = writeups.find(
+  (item) => item.id === 'cybersecurity/network-security/ftp/ftp-security-assessment'
+);
+
+if (!writeup) {
+  throw new Error('FTP write-up not found.');
+}
+
+const { Content } = await render(writeup);
+---
+
+<WriteupLayout
+  title={writeup.data.title}
+  description={writeup.data.description}
+>
+  <Content />
+</WriteupLayout>

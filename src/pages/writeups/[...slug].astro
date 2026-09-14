@@ -7,9 +7,10 @@ export async function getStaticPaths() {
 
   return writeups
     .filter((writeup) => !writeup.data.draft)
+    .filter((writeup) => writeup.data.slug !== 'ftp')
     .map((writeup) => ({
       params: {
-        slug: writeup.id,
+        slug: writeup.data.slug,
       },
       props: {
         writeup,

@@ -11,6 +11,7 @@ const writeups = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
+    slug: z.string(),
 
     category: z.enum([
       'cybersecurity',

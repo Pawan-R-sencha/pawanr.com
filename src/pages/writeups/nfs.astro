@@ -5,11 +5,11 @@ import WriteupLayout from '../../components/writeups/WriteupLayout.astro';
 const writeups = await getCollection('writeups');
 
 const writeup = writeups.find(
-  (item) => item.data.slug === 'ftp'
+  (item) => item.data.slug === 'nfs'
 );
 
 if (!writeup) {
-  throw new Error('FTP write-up not found.');
+  throw new Error('NFS write-up not found.');
 }
 
 const { Content } = await render(writeup);

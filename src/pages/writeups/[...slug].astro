@@ -7,7 +7,7 @@ export async function getStaticPaths() {
 
   return writeups
     .filter((writeup) => !writeup.data.draft)
-    .filter((writeup) => writeup.data.slug !== 'ftp')
+    .filter((writeup) => !['ftp', 'nfs'].includes(writeup.data.slug))
     .map((writeup) => ({
       params: {
         slug: writeup.data.slug,

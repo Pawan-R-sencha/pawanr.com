@@ -1,19 +1,28 @@
 ---
 const { title = "Pawan R | Cybersecurity" } = Astro.props;
+
+const canonicalURL = new URL(
+	Astro.url.pathname,
+	"https://" + "www." + "pawanr.com"
+);
 ---
 
 <!doctype html>
+
 <html lang="en">
+
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="description" content="Pawan R — Cybersecurity, VAPT and Offensive Security." />
+		<link rel="canonical" href={canonicalURL} />
 		<title>{title}</title>
 	</head>
 
 	<body>
 		<slot />
 	</body>
+
 </html>
 
 <style>

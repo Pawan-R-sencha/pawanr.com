@@ -4,6 +4,8 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout>
   <nav class="navbar" aria-label="Main Navigation">
+    <a href="/" class="logo">Pawan R</a>
+
     <div class="nav-links">
       <a href="/journey/">My Journey</a>
       <a href="/writeups/">Write-ups</a>
@@ -117,6 +119,19 @@ import Layout from '../layouts/Layout.astro';
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    gap: 44px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  .logo {
+    color: #aebdcc;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .logo:hover {
+    color: #f5f7fa;
   }
 
   .nav-links {

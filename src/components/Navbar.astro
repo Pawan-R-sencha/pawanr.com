@@ -25,6 +25,7 @@ const { activePage } = Astro.props;
     left: 0;
     width: 100%;
     z-index: 10;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
 
   .nav-container {
@@ -33,14 +34,19 @@ const { activePage } = Astro.props;
     padding: 25px 40px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
+    gap: 44px;
   }
 
   .logo {
-    color: #f5f7fa;
-    font-size: 1.2rem;
-    font-weight: 700;
+    color: #aebdcc;
+    font-size: 0.9rem;
     text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .logo:hover {
+    color: #4da6ff;
   }
 
   .nav-links {

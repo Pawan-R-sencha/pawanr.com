@@ -1,17 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
 ---
 
 <Layout>
-  <nav class="navbar" aria-label="Main Navigation">
-    <a href="/" class="logo">Pawan R</a>
-
-    <div class="nav-links">
-      <a href="/journey/">My Journey</a>
-      <a href="/writeups/">Write-ups</a>
-      <a href="/contact/">Contact</a>
-    </div>
-  </nav>
+  <Navbar flow="static" activePage="home" />
 
   <main>
     <section class="hero">
@@ -110,44 +103,6 @@ import Layout from '../layouts/Layout.astro';
     background: #07111f;
     color: #f5f7fa;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  }
-
-  .navbar {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 30px 40px 0;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 44px;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  }
-
-  .logo {
-    color: #aebdcc;
-    font-size: 0.95rem;
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-
-  .logo:hover {
-    color: #f5f7fa;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 28px;
-  }
-
-  .nav-links a {
-    color: #aebdcc;
-    text-decoration: none;
-    font-size: 0.95rem;
-    transition: color 0.2s ease;
-  }
-
-  .nav-links a:hover {
-    color: #f5f7fa;
   }
 
   .hero {
@@ -398,10 +353,6 @@ import Layout from '../layouts/Layout.astro';
   }
 
   @media (max-width: 800px) {
-    .navbar {
-      padding: 24px 24px 0;
-    }
-
     .hero {
       grid-template-columns: 1fr;
       padding-top: 40px;

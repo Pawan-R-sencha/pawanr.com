@@ -23,9 +23,19 @@ const { title, description } = Astro.props;
       aria-controls="writeup-sidebar"
       aria-expanded="true"
     >
-      <span></span>
-      <span></span>
-      <span></span>
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <polyline points="8 4 16 12 8 20"></polyline>
+      </svg>
     </button>
 
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
@@ -50,9 +60,54 @@ const { title, description } = Astro.props;
       </main>
     </div>
   </div>
-</Layout>
 
-<script src="/scripts/writeup-sidebar.js" is:inline></script>
+  <script>
+    const mobileToggle = document.getElementById('sidebar-toggle');
+    const collapseBtn = document.getElementById('sidebar-collapse');
+    const sidebar = document.getElementById('writeup-sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    const isMobile = () => window.innerWidth <= 900;
+
+    if (sidebar && overlay && mobileToggle) {
+      mobileToggle.addEventListener('click', () => {
+        const isOpen = sidebar.classList.toggle('is-open');
+
+        mobileToggle.classList.toggle('is-active', isOpen);
+        overlay.classList.toggle('is-visible', isOpen);
+
+        mobileToggle.setAttribute('aria-expanded', String(isOpen));
+      });
+
+      overlay.addEventListener('click', () => {
+        sidebar.classList.remove('is-open');
+        mobileToggle.classList.remove('is-active');
+        overlay.classList.remove('is-visible');
+
+        mobileToggle.setAttribute('aria-expanded', 'false');
+      });
+
+      window.addEventListener('resize', () => {
+        if (!isMobile()) {
+          sidebar.classList.remove('is-open');
+          overlay.classList.remove('is-visible');
+          mobileToggle.classList.remove('is-active');
+        } else {
+          sidebar.classList.remove('is-collapsed');
+          collapseBtn?.setAttribute('aria-expanded', 'true');
+        }
+      });
+    }
+
+    if (sidebar && collapseBtn) {
+      collapseBtn.addEventListener('click', () => {
+        const isCollapsed = sidebar.classList.toggle('is-collapsed');
+
+        collapseBtn.setAttribute('aria-expanded', String(!isCollapsed));
+      });
+    }
+  </script>
+</Layout>
 
 <style is:global>
   html,
@@ -104,14 +159,13 @@ const { title, description } = Astro.props;
     width: 42px;
     height: 42px;
 
-    display: flex;
-    flex-direction: column;
+    display: none;
     align-items: center;
     justify-content: center;
-    gap: 5px;
 
     padding: 0;
 
+    color: #ffffff;
     background: #11161d;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 6px;
@@ -119,7 +173,6 @@ const { title, description } = Astro.props;
     cursor: pointer;
 
     transition:
-      left 0.25s ease,
       background 0.2s ease,
       border-color 0.2s ease;
   }
@@ -129,54 +182,12 @@ const { title, description } = Astro.props;
     border-color: rgba(91, 156, 255, 0.4);
   }
 
-  .sidebar-toggle span {
-    display: block;
-    width: 18px;
-    height: 2px;
-
-    background: #ffffff;
-    border-radius: 2px;
-
-    transition:
-      transform 0.2s ease,
-      opacity 0.2s ease;
+  .sidebar-toggle svg {
+    transition: transform 0.25s ease;
   }
 
-  /* Button moves to the left when sidebar is collapsed */
-
-  .sidebar-toggle.is-collapsed {
-    left: 18px;
-  }
-
-  /* Hamburger becomes X when active */
-
-  .sidebar-toggle.is-active span:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-  }
-
-  .sidebar-toggle.is-active span:nth-child(2) {
-    opacity: 0;
-  }
-
-  .sidebar-toggle.is-active span:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-  }
-
-  /* =========================
-     DESKTOP SIDEBAR COLLAPSE
-     ========================= */
-
-  .writeup-sidebar.is-collapsed {
-    width: 0;
-    padding-left: 0;
-    padding-right: 0;
-
-    opacity: 0;
-
-    border-right: 0;
-
-    overflow: hidden;
-    pointer-events: none;
+  .sidebar-toggle.is-active svg {
+    transform: rotate(180deg);
   }
 
   /* =========================
@@ -362,12 +373,12 @@ const { title, description } = Astro.props;
     }
 
     .sidebar-toggle {
-      top: 84px;
-      left: 18px;
-    }
-
-    .sidebar-toggle.is-collapsed {
-      left: 18px;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 40px;
+      height: 40px;
+      display: flex;
     }
 
     .sidebar-overlay {
@@ -390,31 +401,6 @@ const { title, description } = Astro.props;
     .sidebar-overlay.is-visible {
       opacity: 1;
       visibility: visible;
-    }
-
-    /* Mobile sidebar starts closed */
-
-    .writeup-sidebar {
-      transform: translateX(-100%);
-    }
-
-    .writeup-sidebar.is-open {
-      transform: translateX(0);
-    }
-
-    /* Never use desktop collapsed state on mobile */
-
-    .writeup-sidebar.is-collapsed {
-      width: 280px;
-      padding-left: 24px;
-      padding-right: 24px;
-
-      opacity: 1;
-
-      border-right: 1px solid rgba(255, 255, 255, 0.08);
-
-      overflow: visible;
-      pointer-events: auto;
     }
   }
 

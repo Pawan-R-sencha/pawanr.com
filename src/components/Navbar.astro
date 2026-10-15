@@ -1,22 +1,70 @@
 ---
 interface Props {
   activePage?: 'home' | 'journey' | 'writeups' | 'contact';
+  flow?: 'absolute' | 'static';
 }
 
-const { activePage } = Astro.props;
+const { activePage, flow = 'absolute' } = Astro.props;
 ---
 
-<nav class="navbar">
+<nav class:list={['navbar', flow === 'static' && 'navbar-static']} aria-label="Main Navigation">
   <div class="nav-container">
     <a href="/" class="logo">Pawan R</a>
 
-    <div class="nav-links">
+    <button
+      class="nav-toggle"
+      type="button"
+      aria-label="Toggle navigation menu"
+      aria-expanded="false"
+      aria-controls="nav-menu"
+    >
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+    </button>
+
+    <div class="nav-links" id="nav-menu">
+      <a href="/" class:list={['nav-home', activePage === 'home' && 'active']}>Pawan R</a>
       <a href="/journey/" class={activePage === 'journey' ? 'active' : ''}>My Journey</a>
       <a href="/writeups/" class={activePage === 'writeups' ? 'active' : ''}>Write-ups</a>
       <a href="/contact/" class={activePage === 'contact' ? 'active' : ''}>Contact</a>
     </div>
   </div>
 </nav>
+
+<script>
+  const toggles = document.querySelectorAll('.nav-toggle');
+
+  toggles.forEach((toggle) => {
+    const id = toggle.getAttribute('aria-controls');
+    const menu = id ? document.getElementById(id) : null;
+    if (!menu) return;
+
+    const setOpen = (open) => {
+      menu.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+
+    toggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      setOpen(!menu.classList.contains('open'));
+    });
+
+    document.addEventListener('click', (event) => {
+      if (
+        menu.classList.contains('open') &&
+        !menu.contains(event.target) &&
+        !toggle.contains(event.target)
+      ) {
+        setOpen(false);
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') setOpen(false);
+    });
+  });
+</script>
 
 <style>
   .navbar {
@@ -26,9 +74,21 @@ const { activePage } = Astro.props;
     width: 100%;
     z-index: 10;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    pointer-events: none;
+  }
+
+  .navbar a,
+  .navbar button,
+  .nav-links {
+    pointer-events: auto;
+  }
+
+  .navbar-static {
+    position: static;
   }
 
   .nav-container {
+    position: relative;
     max-width: 1200px;
     margin: 0 auto;
     padding: 25px 40px;
@@ -36,6 +96,11 @@ const { activePage } = Astro.props;
     align-items: center;
     justify-content: flex-end;
     gap: 44px;
+  }
+
+  .navbar-static .nav-container {
+    padding-top: 30px;
+    padding-bottom: 0;
   }
 
   .logo {
@@ -47,6 +112,41 @@ const { activePage } = Astro.props;
 
   .logo:hover {
     color: #4da6ff;
+  }
+
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .nav-toggle-bar {
+    display: block;
+    width: 24px;
+    height: 2px;
+    margin: 0 auto;
+    background: #aebdcc;
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
   }
 
   .nav-links {
@@ -66,13 +166,52 @@ const { activePage } = Astro.props;
     color: #4da6ff;
   }
 
-  @media (max-width: 800px) {
-    .nav-links {
-      display: none;
-    }
+  .nav-home {
+    display: none;
+  }
 
+  @media (max-width: 800px) {
     .nav-container {
       padding: 20px;
+      gap: 12px;
+    }
+
+    .navbar-static .nav-container {
+      padding-top: 24px;
+    }
+
+    .nav-toggle {
+      display: flex;
+    }
+
+    .nav-links {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 20px;
+      flex-direction: column;
+      gap: 0;
+      min-width: 180px;
+      padding: 8px 0;
+      background: #0d1b2e;
+      border: 1px solid #1e2f45;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    .nav-links.open {
+      display: flex;
+    }
+
+    .nav-links a {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 18px;
+      font-size: 0.95rem;
+    }
+
+    .nav-home {
+      display: block;
     }
   }
 </style>

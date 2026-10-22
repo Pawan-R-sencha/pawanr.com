@@ -22,7 +22,7 @@ import Navbar from '../components/Navbar.astro';
         </p>
       </section>
 
-      <div class="timeline-connector">↓</div>
+      <div class="timeline-connector" aria-hidden="true">↓</div>
 
       <!-- 2. THE FOUNDATION -->
       <section class="milestone">
@@ -52,11 +52,14 @@ import Navbar from '../components/Navbar.astro';
           <img
             src="/images/graduation-gold-medal.jpg"
             alt="Pawan R at graduation"
+            width="2048"
+            height="1365"
+            decoding="async"
           />
         </div>
       </section>
 
-      <div class="timeline-connector">↓</div>
+      <div class="timeline-connector" aria-hidden="true">↓</div>
 
       <!-- 3. GETTING HANDS-ON -->
       <section class="hands-on">
@@ -91,7 +94,7 @@ import Navbar from '../components/Navbar.astro';
         </div>
       </section>
 
-      <div class="timeline-connector">↓</div>
+      <div class="timeline-connector" aria-hidden="true">↓</div>
 
       <!-- 4. BUILDING PRACTICAL SKILLS -->
       <section class="certifications">
@@ -108,7 +111,7 @@ import Navbar from '../components/Navbar.astro';
 
         <div class="certification-grid">
           <div class="certification-card">
-            <img src="/images/ejpt.png" alt="eJPT certification" />
+            <img src="/images/ejpt.png" alt="eJPT certification" width="1276" height="981" loading="lazy" decoding="async" />
             <h3>eJPT</h3>
             <p>
               My first major step into structured penetration testing, helping me strengthen the fundamentals of network and web security through practical assessment scenarios.
@@ -116,7 +119,7 @@ import Navbar from '../components/Navbar.astro';
           </div>
 
           <div class="certification-card">
-            <img src="/images/ewpt.png" alt="eWPT certification" />
+            <img src="/images/ewpt.png" alt="eWPT certification" width="1270" height="982" loading="lazy" decoding="async" />
             <h3>eWPT</h3>
             <p>
               Deepening my focus on web application security and learning to approach applications from an attacker's perspective.
@@ -124,7 +127,7 @@ import Navbar from '../components/Navbar.astro';
           </div>
 
           <div class="certification-card">
-            <img src="/images/icca.png" alt="ICCA certification" />
+            <img src="/images/icca.png" alt="ICCA certification" width="1266" height="980" loading="lazy" decoding="async" />
             <h3>ICCA</h3>
             <p>
               Expanding my security knowledge into cloud environments and understanding the fundamentals of securing cloud infrastructure.
@@ -133,7 +136,7 @@ import Navbar from '../components/Navbar.astro';
         </div>
       </section>
 
-      <div class="timeline-connector">↓</div>
+      <div class="timeline-connector" aria-hidden="true">↓</div>
 
       <!-- 5. BEYOND THE CLASSROOM -->
       <section class="conference">
@@ -169,6 +172,10 @@ import Navbar from '../components/Navbar.astro';
             <img
               src="/images/bsides-bangalore-2026.jpg"
               alt="Pawan R at BSides Bangalore 2026"
+              width="3024"
+              height="4032"
+              loading="lazy"
+              decoding="async"
             />
           </div>
 
@@ -176,12 +183,16 @@ import Navbar from '../components/Navbar.astro';
             <img
               src="/images/bsides-bangalore-2026-certificate.png"
               alt="BSides Bangalore 2026 certificate of participation"
+              width="2000"
+              height="1414"
+              loading="lazy"
+              decoding="async"
             />
           </div>
         </div>
       </section>
 
-      <div class="timeline-connector">↓</div>
+      <div class="timeline-connector" aria-hidden="true">↓</div>
 
       <!-- 6. FIRST PROFESSIONAL OPPORTUNITY -->
       <section class="professional-journey">
@@ -224,7 +235,7 @@ import Navbar from '../components/Navbar.astro';
         </div>
       </section>
 
-      <div class="timeline-connector">↓</div>
+      <div class="timeline-connector" aria-hidden="true">↓</div>
 
       <!-- 7. WHERE I'M GOING -->
       <section class="future-section">
@@ -268,23 +279,19 @@ import Navbar from '../components/Navbar.astro';
 </Layout>
 
 <style>
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
-
   main {
     min-height: 100vh;
-    background: #07111f;
-    color: #f5f7fa;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    padding-top: 100px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    padding-top: 128px;
     padding-bottom: 100px;
     overflow-x: hidden;
     width: 100%;
   }
 
   .journey-header {
-    max-width: 1000px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 0 40px 40px;
     width: 100%;
@@ -292,21 +299,24 @@ import Navbar from '../components/Navbar.astro';
 
   .section-label,
   .card-label {
-    color: #708399;
-    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-size: var(--fs-label);
     font-weight: 700;
     letter-spacing: 0.15em;
-    margin-bottom: 12px;
+    line-height: 1.4;
+    margin: 0 0 12px;
   }
 
   h1 {
-    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-size: var(--fs-display);
+    line-height: 1.05;
     letter-spacing: -0.04em;
     margin: 0;
   }
 
   .timeline {
-    max-width: 1000px;
+    position: relative;
+    max-width: 900px;
     margin: 0 auto;
     padding: 0 40px;
     display: flex;
@@ -317,35 +327,60 @@ import Navbar from '../components/Navbar.astro';
 
   .journey-card {
     width: 100%;
-    border: 1px solid #1d3249;
-    background: #0b1929;
+    max-width: 760px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-elevated);
     border-radius: 16px;
-    padding: 35px;
+    padding: 36px;
   }
 
   .journey-card h2 {
-    font-size: 2rem;
-    margin: 0 0 20px;
+    font-size: var(--fs-h2);
+    line-height: 1.25;
+    margin: 0 0 18px;
   }
 
   .journey-card p {
-    color: #aebdcc;
-    line-height: 1.8;
+    color: var(--text-secondary);
+    line-height: 1.75;
     margin: 0;
+    max-width: var(--measure-narrow);
   }
 
   .timeline-connector {
-    color: #4da6ff;
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin: 40px 0;
-    opacity: 0.8;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 22px;
+    margin: 24px 0;
+    color: var(--accent);
+    font-size: 0.95rem;
+    line-height: 1;
   }
 
-  /* Milestone Section */
+  .timeline-connector::before {
+    content: "";
+    position: absolute;
+    top: -24px;
+    bottom: -24px;
+    left: 50%;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--line-strong) 18%,
+      var(--line-strong) 82%,
+      transparent
+    );
+    z-index: -1;
+  }
+
+  /* Milestone */
   .milestone {
     width: 100%;
-    max-width: 1000px;
+    max-width: 900px;
     display: grid;
     grid-template-columns: 1fr 0.8fr;
     gap: 40px;
@@ -353,21 +388,23 @@ import Navbar from '../components/Navbar.astro';
   }
 
   .milestone-content {
-    border: 1px solid #1d3249;
-    background: #0b1929;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-elevated);
     border-radius: 16px;
-    padding: 35px;
+    padding: 36px;
   }
 
   .milestone-content h2 {
-    font-size: 2rem;
-    margin: 0 0 20px;
+    font-size: var(--fs-h2);
+    line-height: 1.25;
+    margin: 0 0 18px;
   }
 
   .milestone-content p:not(.card-label) {
-    color: #aebdcc;
-    line-height: 1.8;
-    margin: 0 0 18px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin: 0 0 16px;
+    max-width: var(--measure-narrow);
   }
 
   .milestone-content p:last-child {
@@ -375,10 +412,10 @@ import Navbar from '../components/Navbar.astro';
   }
 
   .milestone-image {
-    border: 1px solid #25415e;
+    border: 1px solid var(--line-strong);
     border-radius: 16px;
-    padding: 10px;
-    background: #0c1b2c;
+    padding: 8px;
+    background: var(--bg-elevated);
     width: 100%;
     overflow: hidden;
   }
@@ -393,75 +430,78 @@ import Navbar from '../components/Navbar.astro';
     border-radius: 10px;
   }
 
-  /* Hands-on Section */
-  .hands-on {
+  /* Cards */
+  .hands-on,
+  .professional-journey,
+  .future-section {
     width: 100%;
-    max-width: 1000px;
+    max-width: 760px;
   }
 
-  .hands-on-content {
+  .certifications,
+  .conference {
     width: 100%;
-    border: 1px solid #1d3249;
-    background: #0b1929;
+    max-width: 900px;
+  }
+
+  .hands-on-content,
+  .professional-content,
+  .future-content {
+    width: 100%;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-elevated);
     border-radius: 16px;
-    padding: 35px;
+    padding: 36px;
   }
 
-  .hands-on-content h2 {
-    font-size: clamp(2rem, 4vw, 3rem);
-    line-height: 1.1;
-    margin: 0 0 25px;
-  }
-
-  .hands-on-content p:not(.card-label) {
-    color: #aebdcc;
-    line-height: 1.8;
+  .hands-on-content h2,
+  .certifications-header h2,
+  .conference-header h2,
+  .professional-content h2,
+  .future-content h2 {
+    font-size: var(--fs-h2);
+    line-height: 1.3;
     margin: 0 0 18px;
   }
 
+  .hands-on-content p:not(.card-label),
+  .certifications-header p:not(.card-label),
+  .conference-header p:not(.card-label),
+  .professional-content p:not(.card-label),
+  .future-content p:not(.card-label) {
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin: 0 0 16px;
+    max-width: var(--measure-narrow);
+  }
+
   .hands-on-content p:last-of-type {
-    margin-bottom: 30px;
+    margin-bottom: 26px;
   }
 
   .thm-highlight {
     display: inline-flex;
     flex-direction: column;
-    border-left: 3px solid #4da6ff;
+    border-left: 3px solid var(--accent);
     padding: 8px 0 8px 18px;
   }
 
   .thm-highlight strong {
-    color: #f5f7fa;
-    font-size: 1.3rem;
+    color: var(--text);
+    font-size: 1.25rem;
   }
 
   .thm-highlight span {
-    color: #708399;
+    color: var(--text-muted);
     font-size: 0.9rem;
     margin-top: 4px;
   }
 
-  /* Certifications Section */
-  .certifications {
-    width: 100%;
-    max-width: 1000px;
-  }
-
-  .certifications-header {
-    max-width: 750px;
-    margin-bottom: 40px;
-  }
-
-  .certifications-header h2 {
-    font-size: clamp(2rem, 4vw, 3rem);
-    line-height: 1.1;
-    margin: 0 0 20px;
-  }
-
-  .certifications-header p:not(.card-label) {
-    color: #aebdcc;
-    line-height: 1.8;
-    margin: 0;
+  /* Certifications */
+  .certifications-header,
+  .conference-header {
+    max-width: 780px;
+    margin-bottom: 36px;
   }
 
   .certification-grid {
@@ -471,8 +511,8 @@ import Navbar from '../components/Navbar.astro';
   }
 
   .certification-card {
-    border: 1px solid #1d3249;
-    background: #0b1929;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-elevated);
     border-radius: 16px;
     padding: 20px;
   }
@@ -484,56 +524,39 @@ import Navbar from '../components/Navbar.astro';
     height: 180px;
     object-fit: contain;
     border-radius: 10px;
-    background: #07111f;
-    margin-bottom: 20px;
+    background: var(--bg);
+    margin-bottom: 18px;
     padding: 10px;
   }
 
   .certification-card h3 {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     margin: 0 0 10px;
   }
 
   .certification-card p {
-    color: #aebdcc;
-    line-height: 1.7;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.65;
     margin: 0;
   }
 
-  /* Conference Section */
-  .conference {
-    width: 100%;
-    max-width: 1000px;
-  }
-
+  /* Conference */
   .conference-header {
     max-width: 800px;
-    margin-bottom: 45px;
-  }
-
-  .conference-header h2 {
-    font-size: clamp(2rem, 4vw, 3rem);
-    line-height: 1.1;
-    margin: 0 0 20px;
-  }
-
-  .conference-header p:not(.card-label) {
-    color: #aebdcc;
-    line-height: 1.8;
-    margin: 0 0 18px;
   }
 
   .conference-details {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 28px;
+    gap: 10px;
+    margin-top: 24px;
   }
 
   .conference-details span {
-    border: 1px solid #25415e;
-    background: #0c1b2c;
-    color: #dce7f2;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-chip);
+    color: var(--text-on-card);
     border-radius: 999px;
     padding: 8px 15px;
     font-size: 0.9rem;
@@ -549,10 +572,10 @@ import Navbar from '../components/Navbar.astro';
 
   .conference-photo,
   .conference-certificate {
-    border: 1px solid #1d3249;
-    background: #0b1929;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-elevated);
     border-radius: 16px;
-    padding: 12px;
+    padding: 10px;
     width: 100%;
     overflow: hidden;
   }
@@ -564,43 +587,18 @@ import Navbar from '../components/Navbar.astro';
     height: 280px;
     object-fit: contain;
     border-radius: 10px;
-    background: #07111f;
+    background: var(--bg);
   }
 
-  /* Professional Journey Section */
-  .professional-journey {
-    width: 100%;
-    max-width: 1000px;
-  }
-
-  .professional-content {
-    width: 100%;
-    border: 1px solid #1d3249;
-    background: #0b1929;
-    border-radius: 16px;
-    padding: 35px;
-  }
-
-  .professional-content h2 {
-    font-size: clamp(2rem, 4vw, 3rem);
-    line-height: 1.1;
-    margin: 0 0 25px;
-  }
-
-  .professional-content p:not(.card-label) {
-    color: #aebdcc;
-    line-height: 1.8;
-    margin: 0 0 18px;
-  }
-
+  /* Professional journey */
   .role-highlights {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     align-items: center;
-    margin-top: 30px;
+    margin-top: 28px;
     padding-top: 20px;
-    border-top: 1px solid #1d3249;
+    border-top: 1px solid var(--line);
   }
 
   .role-badge {
@@ -610,82 +608,57 @@ import Navbar from '../components/Navbar.astro';
   }
 
   .role-date {
-    color: #4da6ff;
+    color: var(--accent);
     font-size: 0.85rem;
     font-weight: 600;
   }
 
   .role-company {
     font-size: 1.2rem;
-    color: #f5f7fa;
+    color: var(--text);
   }
 
   .role-title {
-    color: #708399;
+    color: var(--text-muted);
     font-size: 0.95rem;
   }
 
   .award-badge {
-    border: 1px solid #25415e;
-    background: #0c1b2c;
-    color: #f5f7fa;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-chip);
+    color: var(--text);
     border-radius: 12px;
     padding: 12px 20px;
     font-size: 1rem;
     margin-left: auto;
   }
 
-  /* Future Section */
-  .future-section {
-    width: 100%;
-    max-width: 1000px;
-  }
-
-  .future-content {
-    width: 100%;
-    border: 1px solid #1d3249;
-    background: #0b1929;
-    border-radius: 16px;
-    padding: 35px;
-  }
-
-  .future-content h2 {
-    font-size: clamp(2rem, 4vw, 3rem);
-    line-height: 1.1;
-    margin: 0 0 25px;
-  }
-
-  .future-content p:not(.card-label) {
-    color: #aebdcc;
-    line-height: 1.8;
-    margin: 0 0 18px;
-  }
-
+  /* Future */
   .mindset-block {
-    margin-top: 30px;
-    padding-top: 25px;
-    border-top: 1px solid #1d3249;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
   }
 
-  .mindset-lead {
-    color: #f5f7fa !important;
+  .future-content p.mindset-lead {
+    color: var(--text);
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
   }
 
   .mindset-list {
     list-style: none;
     padding-left: 0;
-    margin: 15px 0 25px;
+    margin: 14px 0 22px;
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
 
   .mindset-list li {
-    color: #4da6ff;
+    color: var(--accent);
     font-weight: 600;
-    font-size: 1.05rem;
+    font-size: 1.02rem;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -693,43 +666,51 @@ import Navbar from '../components/Navbar.astro';
 
   .mindset-list li::before {
     content: "→";
-    color: #708399;
+    color: var(--text-muted);
   }
 
-  .mindset-closing {
-    color: #aebdcc !important;
-    line-height: 1.8;
+  .future-content p.mindset-closing {
+    color: var(--text-secondary);
+    line-height: 1.75;
   }
 
   .mindset-closing em {
-    color: #f5f7fa;
-    font-size: 1.1rem;
+    color: var(--text);
+    font-size: 1.05rem;
+  }
+
+  @media (max-width: 359px) {
+    main {
+      padding-top: 128px;
+    }
   }
 
   @media (max-width: 800px) {
+    main {
+      padding-top: 112px;
+      padding-bottom: 72px;
+    }
+
     .journey-header,
     .timeline {
       padding-left: 20px;
       padding-right: 20px;
     }
 
+    .journey-card,
+    .milestone-content,
+    .hands-on-content,
+    .professional-content,
+    .future-content {
+      padding: 26px 22px;
+    }
+
     .milestone {
       grid-template-columns: 1fr;
-      gap: 30px;
+      gap: 28px;
     }
 
-    .milestone-content {
-      padding: 28px 22px;
-    }
-
-    .certification-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .certification-card img {
-      height: 180px;
-    }
-
+    .certification-grid,
     .conference-images {
       grid-template-columns: 1fr;
     }
@@ -741,6 +722,7 @@ import Navbar from '../components/Navbar.astro';
     .conference-details {
       flex-direction: column;
       align-items: flex-start;
+      gap: 8px;
     }
 
     .role-highlights {

@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import WriteupLayout from '../../components/writeups/WriteupLayout.astro';
+import { getWriteupNeighbors } from '../../lib/writeups';
 
 const writeups = await getCollection('writeups');
 
@@ -12,12 +13,17 @@ if (!writeup) {
   throw new Error('NFS write-up not found.');
 }
 
-const { Content } = await render(writeup);
+const { Content, headings } = await render(writeup);
+const { prev, next } = await getWriteupNeighbors(writeup.data.slug);
 ---
 
 <WriteupLayout
   title={writeup.data.title}
   description={writeup.data.description}
+  protocol={writeup.data.protocol}
+  headings={headings}
+  prev={prev}
+  next={next}
 >
   <Content />
 </WriteupLayout>

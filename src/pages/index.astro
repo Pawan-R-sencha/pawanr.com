@@ -29,24 +29,30 @@ import Navbar from '../components/Navbar.astro';
           offensive security.
         </p>
 
-        <div class="hero-buttons">
-          <a href="/journey/" class="button primary">My Journey</a>
-          <a href="/writeups/" class="button secondary">View Write-ups</a>
-        </div>
       </div>
 
       <div class="hero-photo">
         <div class="photo-frame">
           <img
-            src="/images/pawan-photo.png"
+            src="/images/pawan-photo-1280.jpg"
+            srcset="/images/pawan-photo-640.jpg 640w, /images/pawan-photo-960.jpg 960w, /images/pawan-photo-1280.jpg 1280w"
+            sizes="(max-width: 800px) 92vw, 360px"
+            width="1280"
+            height="1706"
             alt="Pawan R - Offensive Security Professional"
+            fetchpriority="high"
           />
         </div>
+      </div>
+
+      <div class="hero-buttons">
+        <a href="/journey/" class="button primary">My Journey</a>
+        <a href="/writeups/" class="button secondary">View Write-ups</a>
       </div>
     </section>
 
     <section class="focus">
-      <p class="section-label">WHAT I WORK WITH</p>
+      <h2 class="section-label">WHAT I WORK WITH</h2>
 
       <div class="focus-grid">
         <div>Web Application Security</div>
@@ -60,7 +66,7 @@ import Navbar from '../components/Navbar.astro';
     </section>
 
     <section class="highlights">
-      <p class="section-label">MILESTONES & CERTIFICATIONS</p>
+      <h2 class="section-label">MILESTONES & CERTIFICATIONS</h2>
 
       <div class="highlight-pills">
         <span class="pill gold-accent">🏆 B.Sc. Cyber Security Gold Medalist Graduate</span>
@@ -74,7 +80,7 @@ import Navbar from '../components/Navbar.astro';
 
     <section class="split-row">
       <div class="split-card">
-        <p class="section-label">CURRENTLY LEARNING</p>
+        <h2 class="section-label">CURRENTLY LEARNING</h2>
         <p class="split-text">
           Active Directory & Windows Security, and going deeper
           into offensive security fundamentals.
@@ -82,7 +88,7 @@ import Navbar from '../components/Navbar.astro';
       </div>
 
       <div class="split-card">
-        <p class="section-label">MENTORING</p>
+        <h2 class="section-label">MENTORING</h2>
         <p class="split-text">
           I train and mentor aspiring security professionals
           from the ground up.
@@ -100,51 +106,62 @@ import Navbar from '../components/Navbar.astro';
 <style>
   main {
     min-height: 100vh;
-    background: #07111f;
-    color: #f5f7fa;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
   }
 
   .hero {
     max-width: 1200px;
     min-height: 72vh;
     margin: 0 auto;
-    padding: 60px 40px;
+    padding: 112px 40px 64px;
     display: grid;
     grid-template-columns: 1.25fr 0.75fr;
+    grid-template-areas:
+      "intro photo"
+      "actions photo";
+    align-content: center;
     align-items: center;
-    gap: 70px;
+    column-gap: 70px;
+    row-gap: 0;
+  }
+
+  .hero-content {
+    grid-area: intro;
+  }
+
+  .hero-photo {
+    grid-area: photo;
+  }
+
+  .hero-buttons {
+    grid-area: actions;
   }
 
   .greeting {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: #60a5fa;
-    font-size: 1.5rem;
+    color: var(--accent);
+    font-size: 1.3rem;
     font-weight: 700;
     letter-spacing: 0.02em;
-    margin-bottom: 24px;
+    margin: 0 0 24px;
     background: rgba(77, 166, 255, 0.08);
     border: 1px solid rgba(77, 166, 255, 0.2);
-    padding: 8px 18px;
+    padding: 6px 16px;
     border-radius: 999px;
     width: fit-content;
-    box-shadow: 0 0 20px rgba(77, 166, 255, 0.1);
   }
 
   .greeting span {
     display: inline-block;
-    font-size: 1.6rem;
-    transition: transform 0.2s ease;
-  }
-
-  .greeting:hover span {
-    transform: scale(1.2) rotate(5deg);
+    font-size: 1.4rem;
   }
 
   h1 {
-    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-size: var(--fs-hero);
     line-height: 1;
     letter-spacing: -0.05em;
     margin: 0 0 30px;
@@ -154,40 +171,45 @@ import Navbar from '../components/Navbar.astro';
   .headline-first {
     white-space: nowrap;
     display: inline-block;
-    color: #4da6ff;
+    color: var(--accent);
     margin-right: 0.15em;
   }
 
   h1 .tagline {
     display: block;
-    color: #aebdcc;
-    font-size: 0.3em;
+    color: var(--text-secondary);
+    font-size: max(1rem, 0.3em);
     font-weight: 500;
+    line-height: 1.5;
     letter-spacing: 0;
     margin-top: 18px;
-    max-width: 620px;
+    max-width: 34ch;
   }
 
   .hero-description {
-    max-width: 700px;
-    color: #aebdcc;
-    font-size: 1.1rem;
-    line-height: 1.8;
-    margin: 0 0 15px;
+    max-width: var(--measure-narrow);
+    color: var(--text-secondary);
+    font-size: var(--fs-body);
+    line-height: 1.7;
+    margin: 0 0 14px;
   }
 
   .hero-description strong {
-    color: #f5f7fa;
+    color: var(--text);
   }
 
   .hero-buttons {
     display: flex;
     gap: 15px;
-    margin-top: 35px;
+    margin-top: 32px;
   }
 
   .button {
-    padding: 13px 22px;
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 22px;
     border-radius: 8px;
     text-decoration: none;
     font-weight: 600;
@@ -195,22 +217,22 @@ import Navbar from '../components/Navbar.astro';
   }
 
   .primary {
-    background: #1683ff;
-    color: white;
+    background: var(--accent-strong);
+    color: #ffffff;
   }
 
   .primary:hover {
-    background: #006ce6;
+    background: var(--accent-strong-hover);
   }
 
   .secondary {
-    border: 1px solid #31445b;
-    color: #dce7f2;
+    border: 1px solid var(--line-strong);
+    color: var(--text);
   }
 
   .secondary:hover {
-    border-color: #4da6ff;
-    color: #ffffff;
+    border-color: var(--accent);
+    color: var(--text);
   }
 
   .button:hover {
@@ -224,22 +246,16 @@ import Navbar from '../components/Navbar.astro';
 
   .photo-frame {
     width: min(360px, 100%);
-    border: 1px solid #25415e;
+    border: 1px solid var(--line-strong);
     border-radius: 18px;
-    padding: 10px;
-    background: #0c1b2c;
-    box-shadow: 0 0 60px rgba(22, 131, 255, 0.12);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .photo-frame:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 0 70px rgba(22, 131, 255, 0.22);
+    padding: 8px;
+    background: var(--bg-elevated);
   }
 
   .photo-frame img {
     display: block;
     width: 100%;
+    height: auto;
     aspect-ratio: 3 / 4;
     object-fit: cover;
     border-radius: 12px;
@@ -255,11 +271,12 @@ import Navbar from '../components/Navbar.astro';
   }
 
   .section-label {
-    color: #708399;
-    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-size: var(--fs-label);
     font-weight: 700;
     letter-spacing: 0.15em;
-    margin-bottom: 20px;
+    line-height: 1.4;
+    margin: 0 0 20px;
   }
 
   .focus-grid {
@@ -269,18 +286,11 @@ import Navbar from '../components/Navbar.astro';
   }
 
   .focus-grid div {
-    border: 1px solid #1d3249;
-    background: #0b1929;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-elevated);
     border-radius: 10px;
     padding: 20px;
-    color: #c8d5e3;
-    transition: transform 0.2s ease, border-color 0.2s ease;
-  }
-
-  .focus-grid div:hover {
-    transform: translateY(-3px);
-    border-color: #315275;
-    color: #ffffff;
+    color: var(--text-on-card);
   }
 
   .highlight-pills {
@@ -290,30 +300,25 @@ import Navbar from '../components/Navbar.astro';
   }
 
   .pill {
-    border: 1px solid #25415e;
-    background: #0c1b2c;
-    color: #dce7f2;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-chip);
+    color: var(--text-on-card);
     border-radius: 999px;
     padding: 8px 18px;
-    font-size: 0.9rem;
+    font-size: var(--fs-small);
     font-weight: 500;
-    transition: transform 0.2s ease;
-  }
-
-  .pill:hover {
-    transform: translateY(-2px);
   }
 
   .pill.gold-accent {
-    border-color: #d4af37;
-    background: rgba(212, 175, 55, 0.12);
-    color: #fce89e;
+    border-color: var(--gold-border);
+    background: var(--gold-bg);
+    color: var(--gold-text);
   }
 
   .pill.award-accent {
-    border-color: #4da6ff;
-    background: rgba(77, 166, 255, 0.12);
-    color: #b3d9ff;
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--award-text);
   }
 
   .split-row {
@@ -323,22 +328,17 @@ import Navbar from '../components/Navbar.astro';
   }
 
   .split-card {
-    border: 1px solid #1d3249;
-    background: #0b1929;
-    border-radius: 12px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-elevated);
+    border-radius: var(--radius);
     padding: 24px;
-    transition: transform 0.2s ease, border-color 0.2s ease;
-  }
-
-  .split-card:hover {
-    transform: translateY(-3px);
-    border-color: #315275;
   }
 
   .split-text {
-    color: #c8d5e3;
+    color: var(--text-on-card);
     line-height: 1.7;
     margin: 0;
+    max-width: var(--measure-narrow);
   }
 
   .closing-cta {
@@ -347,7 +347,7 @@ import Navbar from '../components/Navbar.astro';
   }
 
   .closing-cta p {
-    color: #aebdcc;
+    color: var(--text-secondary);
     font-size: 1.15rem;
     margin: 0 0 24px;
   }
@@ -355,12 +355,13 @@ import Navbar from '../components/Navbar.astro';
   @media (max-width: 800px) {
     .hero {
       grid-template-columns: 1fr;
-      padding-top: 40px;
-      gap: 40px;
-    }
-
-    .hero-photo {
-      order: -1;
+      grid-template-areas:
+        "intro"
+        "photo"
+        "actions";
+      padding: 100px 24px 48px;
+      gap: 32px;
+      min-height: auto;
     }
 
     .focus-grid {
@@ -373,10 +374,44 @@ import Navbar from '../components/Navbar.astro';
 
     .hero-buttons {
       flex-direction: column;
+      align-items: stretch;
+      margin-top: 0;
     }
 
     .button {
-      text-align: center;
+      width: 100%;
+    }
+
+    .focus,
+    .highlights,
+    .split-row,
+    .closing-cta {
+      padding: 26px 24px;
+    }
+
+    .closing-cta {
+      padding: 48px 24px 80px;
+    }
+  }
+
+  @media (max-width: 359px) {
+    .hero {
+      padding-top: 128px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .hero {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .focus,
+    .highlights,
+    .split-row,
+    .closing-cta {
+      padding-left: 20px;
+      padding-right: 20px;
     }
   }
 </style>

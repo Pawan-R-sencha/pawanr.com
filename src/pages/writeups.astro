@@ -46,7 +46,7 @@ import WriteupSidebar from '../components/writeups/WriteupSidebar.astro';
             </p>
           </div>
 
-          <span class="arrow">→</span>
+          <span class="arrow" aria-hidden="true">→</span>
         </a>
 
         <a
@@ -65,7 +65,7 @@ import WriteupSidebar from '../components/writeups/WriteupSidebar.astro';
             </p>
           </div>
 
-          <span class="arrow">→</span>
+          <span class="arrow" aria-hidden="true">→</span>
         </a>
 
         <a
@@ -84,7 +84,7 @@ import WriteupSidebar from '../components/writeups/WriteupSidebar.astro';
             </p>
           </div>
 
-          <span class="arrow">→</span>
+          <span class="arrow" aria-hidden="true">→</span>
         </a>
       </section>
     </section>
@@ -94,8 +94,8 @@ import WriteupSidebar from '../components/writeups/WriteupSidebar.astro';
 <style>
   .writeups-page {
     display: flex;
-    min-height: calc(100vh - 80px);
-    background: #080b10;
+    min-height: 100vh;
+    background: var(--bg);
   }
 
   .writeups-content {
@@ -103,45 +103,48 @@ import WriteupSidebar from '../components/writeups/WriteupSidebar.astro';
     min-width: 0;
     max-width: 1000px;
     margin: 0 auto;
-    padding: 80px 56px 120px;
+    padding: 120px 56px 120px;
+    font-family: var(--font-serif);
   }
 
   .writeups-header {
     max-width: 760px;
-    margin-bottom: 80px;
+    margin-bottom: 72px;
   }
 
   .section-label,
   .category-label,
   .protocol {
-    color: #5b9cff;
-    font-size: 0.75rem;
+    font-family: var(--font-sans);
+    color: var(--accent);
+    font-size: var(--fs-label);
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
+    line-height: 1.4;
   }
 
   .section-label {
-    margin: 0 0 24px;
+    margin: 0 0 22px;
   }
 
   h1 {
     margin: 0;
-    color: #ffffff;
-    font-size: clamp(3rem, 7vw, 5.5rem);
-    line-height: 1.05;
-    letter-spacing: -0.04em;
+    color: var(--text);
+    font-size: var(--fs-display);
+    line-height: 1.06;
+    letter-spacing: -0.015em;
   }
 
   h1 span {
-    color: #5b9cff;
+    color: var(--accent);
   }
 
   .intro {
-    max-width: 680px;
-    margin: 32px 0 0;
-    color: #aeb8c7;
-    font-size: 1.05rem;
-    line-height: 1.8;
+    max-width: 56ch;
+    margin: 26px 0 0;
+    color: var(--text-secondary);
+    font-size: 1.12rem;
+    line-height: 1.7;
   }
 
   .writeup-section {
@@ -149,13 +152,14 @@ import WriteupSidebar from '../components/writeups/WriteupSidebar.astro';
   }
 
   .category-label {
-    margin: 0 0 12px;
+    margin: 0 0 10px;
   }
 
   h2 {
-    margin: 0 0 24px;
-    color: #ffffff;
-    font-size: 1.6rem;
+    margin: 0 0 22px;
+    color: var(--text);
+    font-size: var(--fs-h2);
+    line-height: 1.3;
   }
 
   .writeup-card {
@@ -164,12 +168,12 @@ import WriteupSidebar from '../components/writeups/WriteupSidebar.astro';
     justify-content: space-between;
     gap: 32px;
     padding: 28px 30px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     color: inherit;
     text-decoration: none;
-    background: #0c1016;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--line);
+    border-radius: 10px;
     transition:
       border-color 0.2s ease,
       background 0.2s ease,
@@ -177,8 +181,8 @@ import WriteupSidebar from '../components/writeups/WriteupSidebar.astro';
   }
 
   .writeup-card:hover {
-    background: #10151d;
-    border-color: rgba(91, 156, 255, 0.35);
+    background: var(--bg-elevated-hover);
+    border-color: var(--accent-line);
     transform: translateY(-2px);
   }
 
@@ -187,27 +191,28 @@ import WriteupSidebar from '../components/writeups/WriteupSidebar.astro';
   }
 
   .protocol {
-    margin: 0 0 12px;
+    margin: 0 0 10px;
   }
 
   h3 {
-    margin: 0 0 12px;
-    color: #ffffff;
-    font-size: 1.25rem;
-    line-height: 1.4;
+    margin: 0 0 10px;
+    color: var(--text);
+    font-size: 1.3rem;
+    line-height: 1.35;
   }
 
   .writeup-card p:not(.protocol) {
     margin: 0;
-    max-width: 720px;
-    color: #8d98a8;
-    font-size: 0.92rem;
-    line-height: 1.7;
+    max-width: var(--measure-narrow);
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.65;
   }
 
   .arrow {
     flex-shrink: 0;
-    color: #5b9cff;
+    color: var(--accent);
+    font-family: var(--font-sans);
     font-size: 1.4rem;
     transition: transform 0.2s ease;
   }
@@ -218,21 +223,28 @@ import WriteupSidebar from '../components/writeups/WriteupSidebar.astro';
 
   @media (max-width: 900px) {
     .writeups-content {
-      padding: 64px 32px 100px;
+      padding: 108px 32px 100px;
+    }
+  }
+
+  @media (max-width: 359px) {
+    .writeups-content {
+      padding-top: 128px;
     }
   }
 
   @media (max-width: 600px) {
     .writeups-content {
-      padding: 48px 20px 80px;
+      padding: 100px 20px 80px;
     }
 
     .writeup-card {
       padding: 22px;
+      gap: 20px;
     }
 
     .writeup-card p:not(.protocol) {
-      font-size: 0.88rem;
+      font-size: 0.95rem;
     }
   }
 </style>

@@ -1,10 +1,21 @@
 ---
-const { title = "Pawan R | Cybersecurity" } = Astro.props;
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const {
+	title = "Pawan R | Cybersecurity",
+	description = "Pawan R — Cybersecurity, VAPT and Offensive Security.",
+} = Astro.props;
 
 const canonicalURL = new URL(
 	Astro.url.pathname,
 	"https://" + "www." + "pawanr.com"
 );
+
+const ogImage = "https://www.pawanr.com/og-image.png";
+const ogImageAlt = "Pawan R — Offensive Security | Curious Mind";
 ---
 
 <!doctype html>
@@ -13,19 +24,216 @@ const canonicalURL = new URL(
 
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="description" content="Pawan R — Cybersecurity, VAPT and Offensive Security." />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content={description} />
+		<meta name="theme-color" content="#07111f" />
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="icon" href="/favicon.ico" sizes="64x64" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="Pawan R" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:image:type" content="image/png" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content={ogImageAlt} />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImage} />
+		<meta name="twitter:image:alt" content={ogImageAlt} />
 		<link rel="canonical" href={canonicalURL} />
 		<title>{title}</title>
+
+		<script is:inline src="/js/theme-init.js"></script>
 	</head>
 
 	<body>
 		<slot />
+		<script is:inline src="/js/theme-menu.js"></script>
 	</body>
 
 </html>
 
-<style>
+<style is:global>
+	:root {
+		--font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+		--font-serif: ui-serif, "New York", Georgia, "Times New Roman", serif;
+		--font-mono: ui-monospace, "SFMono-Regular", "Cascadia Code", "Roboto Mono", Menlo, Consolas, monospace;
+
+		--fs-hero: clamp(2rem, 6.5vw, 5rem);
+		--fs-display: clamp(2.25rem, 4.6vw, 4rem);
+		--fs-h2: clamp(1.6rem, 2.6vw, 2rem);
+		--fs-body: 1.1rem;
+		--fs-small: 0.9rem;
+		--fs-label: 0.78rem;
+
+		--measure: 620px;
+		--measure-narrow: 560px;
+		--radius: 12px;
+
+		/* Dark appearance (default) */
+		color-scheme: dark;
+
+		--bg: #07111f;
+		--bg-elevated: #0b1929;
+		--bg-inset: #11161d;
+		--bg-chip: #0c1b2c;
+		--bg-code: #11161d;
+		--bg-elevated-hover: #0d1e31;
+
+		--line: rgba(255, 255, 255, 0.09);
+		--line-strong: #25415e;
+		--overlay: rgba(0, 0, 0, 0.55);
+
+		--text: #f5f7fa;
+		--text-secondary: #aebdcc;
+		--text-muted: #8d98a8;
+		--text-on-card: #c8d5e3;
+		--text-body: #c7ced8;
+		--code-text: #d9e2ef;
+
+		--accent: #4da6ff;
+		--accent-hover: #7db9ff;
+		--accent-strong: #0b63c9;
+		--accent-strong-hover: #0a5bb5;
+		--accent-soft: rgba(77, 166, 255, 0.12);
+		--accent-line: rgba(77, 166, 255, 0.4);
+
+		--gold-bg: rgba(212, 175, 55, 0.12);
+		--gold-border: #d4af37;
+		--gold-text: #fce89e;
+		--award-text: #b3d9ff;
+
+		--code-bg: rgba(255, 255, 255, 0.06);
+		--shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+	}
+
+	/* Light appearance, explicit choice */
+	:root[data-theme="light"] {
+		color-scheme: light;
+
+		--bg: #f4f7fb;
+		--bg-elevated: #ffffff;
+		--bg-inset: #edf1f7;
+		--bg-chip: #e8eef7;
+		--bg-code: #eef2f7;
+		--bg-elevated-hover: #eff4fb;
+
+		--line: rgba(13, 27, 42, 0.12);
+		--line-strong: #cfd9e6;
+		--overlay: rgba(9, 20, 35, 0.45);
+
+		--text: #0d1b2a;
+		--text-secondary: #46586d;
+		--text-muted: #5a6b7f;
+		--text-on-card: #33465c;
+		--text-body: #33465c;
+		--code-text: #1f2d3d;
+
+		--accent: #0b63c9;
+		--accent-hover: #0a5bb5;
+		--accent-soft: rgba(11, 99, 201, 0.08);
+		--accent-line: rgba(11, 99, 201, 0.35);
+
+		--gold-bg: #fdf3d6;
+		--gold-border: #c9a227;
+		--gold-text: #6b4e00;
+		--award-text: #0b4c9a;
+
+		--code-bg: rgba(13, 27, 42, 0.07);
+		--shadow: 0 8px 24px rgba(9, 20, 35, 0.18);
+	}
+
+	/* Light appearance, following the system when no choice is stored */
+	@media (prefers-color-scheme: light) {
+		:root:not([data-theme]) {
+			color-scheme: light;
+
+			--bg: #f4f7fb;
+			--bg-elevated: #ffffff;
+			--bg-inset: #edf1f7;
+			--bg-chip: #e8eef7;
+			--bg-code: #eef2f7;
+			--bg-elevated-hover: #eff4fb;
+
+			--line: rgba(13, 27, 42, 0.12);
+			--line-strong: #cfd9e6;
+			--overlay: rgba(9, 20, 35, 0.45);
+
+			--text: #0d1b2a;
+			--text-secondary: #46586d;
+			--text-muted: #5a6b7f;
+			--text-on-card: #33465c;
+			--text-body: #33465c;
+			--code-text: #1f2d3d;
+
+			--accent: #0b63c9;
+			--accent-hover: #0a5bb5;
+			--accent-soft: rgba(11, 99, 201, 0.08);
+			--accent-line: rgba(11, 99, 201, 0.35);
+
+			--gold-bg: #fdf3d6;
+			--gold-border: #c9a227;
+			--gold-text: #6b4e00;
+			--award-text: #0b4c9a;
+
+			--code-bg: rgba(13, 27, 42, 0.07);
+			--shadow: 0 8px 24px rgba(9, 20, 35, 0.18);
+		}
+	}
+
+	/* Increased contrast */
+	@media (prefers-contrast: more) {
+		:root,
+		:root[data-theme="dark"] {
+			--line: rgba(255, 255, 255, 0.26);
+			--line-strong: #6b90b8;
+			--text-secondary: #dbe5ef;
+			--text-muted: #c6d2df;
+			--text-on-card: #e4ecf4;
+			--text-body: #e4ecf4;
+			--accent: #8cc4ff;
+			--gold-text: #ffe9a3;
+			--award-text: #d6ebff;
+		}
+
+		:root[data-theme="light"] {
+			--line: rgba(9, 20, 35, 0.32);
+			--line-strong: #8ea3ba;
+			--text-secondary: #1f3347;
+			--text-muted: #2a3f55;
+			--text-on-card: #1a2c40;
+			--text-body: #1a2c40;
+			--accent: #084a9a;
+			--gold-text: #4f3900;
+			--award-text: #083b78;
+		}
+
+		@media (prefers-color-scheme: light) {
+			:root:not([data-theme]) {
+				--line: rgba(9, 20, 35, 0.32);
+				--line-strong: #8ea3ba;
+				--text-secondary: #1f3347;
+				--text-muted: #2a3f55;
+				--text-on-card: #1a2c40;
+				--text-body: #1a2c40;
+				--accent: #084a9a;
+				--gold-text: #4f3900;
+				--award-text: #083b78;
+			}
+		}
+	}
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+
 	html,
 	body {
 		margin: 0;
@@ -34,7 +242,58 @@ const canonicalURL = new URL(
 		min-height: 100%;
 	}
 
+	html {
+		scroll-behavior: smooth;
+	}
+
 	body {
-		background: #07111f;
+		background: var(--bg);
+		color: var(--text);
+		font-family: var(--font-sans);
+		-webkit-font-smoothing: antialiased;
+		text-rendering: optimizeLegibility;
+	}
+
+	::selection {
+		background: rgba(77, 166, 255, 0.3);
+		color: #ffffff;
+	}
+
+	:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 3px;
+		border-radius: 4px;
+	}
+
+	.theme-icon {
+		display: none;
+	}
+
+	:root[data-theme-mode="light"] .theme-icon-light,
+	:root[data-theme-mode="dark"] .theme-icon-dark,
+	:root[data-theme-mode="system"] .theme-icon-system,
+	:root:not([data-theme-mode]) .theme-icon-system {
+		display: block;
+	}
+
+	@media (prefers-contrast: more) {
+		:focus-visible {
+			outline-width: 3px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		html {
+			scroll-behavior: auto;
+		}
+
+		*,
+		*::before,
+		*::after {
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.01ms !important;
+			scroll-behavior: auto !important;
+		}
 	}
 </style>

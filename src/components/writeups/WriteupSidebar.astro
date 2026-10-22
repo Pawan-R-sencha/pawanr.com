@@ -1,4 +1,19 @@
 ---
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  current?: string;
+  headings?: Heading[];
+}
+
+const { current, headings = [] } = Astro.props;
+
+const toc = headings.filter((heading) => heading.depth === 1);
+
 const sections = [
   {
     title: 'CYBERSECURITY',
@@ -64,23 +79,45 @@ const sections = [
 
             <div class="items">
               {group.items.map((item) => (
-                <a href={item.href}>{item.name}</a>
+                <a
+                  href={item.href}
+                  class:list={[current === item.name && 'is-active']}
+                  aria-current={current === item.name ? 'page' : undefined}
+                >{item.name}</a>
               ))}
             </div>
           </div>
         ))}
       </div>
     ))}
+
+    {toc.length > 0 && (
+      <div class="toc">
+        <div class="toc-title">ON THIS PAGE</div>
+
+        <div class="toc-items">
+          {toc.map((heading) => (
+            <a href={`#${heading.slug}`} data-toc>{heading.text}</a>
+          ))}
+        </div>
+      </div>
+    )}
   </nav>
 </aside>
 
 <style>
   .writeup-sidebar {
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
     width: 250px;
     flex-shrink: 0;
+    height: 100vh;
+    overflow-y: auto;
     padding: 32px 20px;
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    border-right: 1px solid var(--line);
     box-sizing: border-box;
+    font-family: var(--font-sans);
     transition:
       width 0.25s ease,
       padding 0.25s ease,
@@ -92,14 +129,14 @@ const sections = [
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
   }
 
   .sidebar-label {
-    color: #5b9cff;
-    font-size: 0.75rem;
+    color: var(--accent);
+    font-size: var(--fs-label);
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     white-space: nowrap;
   }
 
@@ -111,9 +148,9 @@ const sections = [
     width: 28px;
     height: 28px;
     padding: 0;
-    color: #8d98a8;
+    color: var(--text-muted);
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--line);
     border-radius: 6px;
     cursor: pointer;
     transition:
@@ -123,9 +160,9 @@ const sections = [
   }
 
   .sidebar-collapse:hover {
-    color: #ffffff;
-    background: rgba(91, 156, 255, 0.08);
-    border-color: rgba(91, 156, 255, 0.4);
+    color: var(--text);
+    background: var(--accent-soft);
+    border-color: var(--accent-line);
   }
 
   .sidebar-collapse svg {
@@ -152,24 +189,24 @@ const sections = [
   }
 
   .section {
-    margin-bottom: 36px;
+    margin-bottom: 28px;
   }
 
   .section-title {
-    margin-bottom: 18px;
-    color: #ffffff;
+    margin-bottom: 16px;
+    color: var(--text);
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.14em;
   }
 
   .group {
-    margin-bottom: 18px;
+    margin-bottom: 16px;
   }
 
   .group-title {
     margin-bottom: 8px;
-    color: #8d98a8;
+    color: var(--text-muted);
     font-size: 0.82rem;
     line-height: 1.4;
   }
@@ -177,15 +214,15 @@ const sections = [
   .items {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
     padding-left: 12px;
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 1px solid var(--line);
   }
 
   .items a {
     padding: 6px 10px;
-    color: #697586;
-    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
     text-decoration: none;
     border-radius: 4px;
     transition:
@@ -194,8 +231,56 @@ const sections = [
   }
 
   .items a:hover {
-    color: #ffffff;
-    background: rgba(91, 156, 255, 0.08);
+    color: var(--text);
+    background: var(--accent-soft);
+  }
+
+  .items a.is-active {
+    color: var(--accent);
+    background: var(--accent-soft);
+    font-weight: 600;
+  }
+
+  .toc {
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  .toc-title {
+    margin-bottom: 10px;
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+
+  .toc-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .toc-items a {
+    display: block;
+    padding: 5px 0 5px 10px;
+    border-left: 1px solid var(--line);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    line-height: 1.45;
+    text-decoration: none;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .toc-items a:hover {
+    color: var(--text-secondary);
+    border-left-color: var(--accent);
+  }
+
+  .toc-items a.is-active {
+    color: var(--accent);
+    border-left-color: var(--accent);
   }
 
   @media (max-width: 900px) {
@@ -208,12 +293,13 @@ const sections = [
       top: 0;
       left: 0;
       z-index: 40;
-      width: 280px;
+      width: 290px;
       height: 100vh;
-      padding: 100px 24px 32px;
-      background: #080b10;
-      border-right: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 12px 0 40px rgba(0, 0, 0, 0.35);
+      overflow-y: auto;
+      padding: 88px 24px 32px;
+      background: var(--bg);
+      border-right: 1px solid var(--line);
+      box-shadow: 12px 0 40px rgba(0, 0, 0, 0.4);
       transform: translateX(-100%);
       transition: transform 0.25s ease;
     }
@@ -223,8 +309,8 @@ const sections = [
     }
 
     .writeup-sidebar.is-collapsed {
-      width: 280px;
-      padding: 100px 24px 32px;
+      width: 290px;
+      padding: 88px 24px 32px;
     }
 
     .writeup-sidebar.is-collapsed .sidebar-label {

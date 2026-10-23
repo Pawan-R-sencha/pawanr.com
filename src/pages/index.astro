@@ -3,10 +3,13 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 ---
 
-<Layout>
-  <Navbar flow="static" activePage="home" />
+<Layout
+  title="Pawan R | Cybersecurity & Offensive Security"
+  description="Cybersecurity graduate and offensive security professional working across web, API, network, and cloud security. Explore my journey and write-ups."
+>
+  <Navbar activePage="home" />
 
-  <main>
+  <main id="main-content">
     <section class="hero">
       <div class="hero-content">
         <p class="greeting">Namaste <span>🙏</span></p>

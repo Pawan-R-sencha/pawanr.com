@@ -30,35 +30,10 @@ const { title, description, protocol, headings = [], prev, next } = Astro.props;
   <div class="writeup-page">
     <Navbar activePage="writeups" />
 
-    <button
-      class="sidebar-toggle"
-      id="sidebar-toggle"
-      type="button"
-      aria-label="Toggle write-up navigation"
-      aria-controls="writeup-sidebar"
-      aria-expanded="false"
-    >
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-      >
-        <polyline points="8 4 16 12 8 20"></polyline>
-      </svg>
-    </button>
-
-    <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
     <div class="writeup-shell">
       <WriteupSidebar current={protocol} headings={headings} />
 
-      <main class="writeup-main">
+      <main class="writeup-main" id="main-content">
         <article class="writeup-article">
           <header class="article-header">
             <p class="article-label">{title.toUpperCase()}</p>
@@ -94,7 +69,6 @@ const { title, description, protocol, headings = [], prev, next } = Astro.props;
     </div>
   </div>
 
-  <script is:inline src="/js/writeup-sidebar.js"></script>
 </Layout>
 
 <style is:global>
@@ -123,59 +97,6 @@ const { title, description, protocol, headings = [], prev, next } = Astro.props;
     padding: 120px 48px 120px;
     box-sizing: border-box;
     font-family: var(--font-serif);
-  }
-
-  /* =========================
-     SIDEBAR TOGGLE
-     ========================= */
-
-  .sidebar-toggle {
-    position: fixed;
-    right: 20px;
-    bottom: max(20px, env(safe-area-inset-bottom));
-    z-index: 60;
-
-    width: 48px;
-    height: 48px;
-
-    display: none;
-    align-items: center;
-    justify-content: center;
-
-    padding: 0;
-
-    color: var(--text);
-    background: var(--bg-inset);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-
-    cursor: pointer;
-    box-shadow: var(--shadow);
-
-    transition:
-      background 0.2s ease,
-      border-color 0.2s ease;
-  }
-
-  .sidebar-toggle:hover {
-    background: var(--bg-elevated);
-    border-color: var(--accent-line);
-  }
-
-  .sidebar-toggle svg {
-    transition: transform 0.25s ease;
-  }
-
-  .sidebar-toggle.is-active svg {
-    transform: rotate(180deg);
-  }
-
-  /* =========================
-     MOBILE OVERLAY
-     ========================= */
-
-  .sidebar-overlay {
-    display: none;
   }
 
   /* =========================
@@ -421,31 +342,6 @@ const { title, description, protocol, headings = [], prev, next } = Astro.props;
       padding: 104px 28px 96px;
     }
 
-    .sidebar-toggle {
-      display: flex;
-    }
-
-    .sidebar-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 30;
-
-      display: block;
-
-      background: var(--overlay);
-
-      opacity: 0;
-      visibility: hidden;
-
-      transition:
-        opacity 0.25s ease,
-        visibility 0.25s ease;
-    }
-
-    .sidebar-overlay.is-visible {
-      opacity: 1;
-      visibility: visible;
-    }
   }
 
   @media (max-width: 359px) {

@@ -4,10 +4,13 @@ import Navbar from '../components/Navbar.astro';
 import WriteupSidebar from '../components/writeups/WriteupSidebar.astro';
 ---
 
-<Layout>
+<Layout
+  title="Write-ups | Pawan R"
+  description="Practical security assessments and technical write-ups covering web, API, network, and cloud security — documented step by step."
+>
   <Navbar activePage="writeups" />
 
-  <main class="writeups-page">
+  <main class="writeups-page" id="main-content">
     <WriteupSidebar />
 
     <section class="writeups-content">

@@ -9,13 +9,68 @@ const {
 	description = "Pawan R — Cybersecurity, VAPT and Offensive Security.",
 } = Astro.props;
 
-const canonicalURL = new URL(
-	Astro.url.pathname,
-	"https://" + "www." + "pawanr.com"
-);
-
-const ogImage = "https://www.pawanr.com/og-image.png";
+const siteURL = "https://www.pawanr.com";
+const canonicalURL = new URL(Astro.url.pathname, siteURL);
+const ogImage = `${siteURL}/og-image.png`;
 const ogImageAlt = "Pawan R — Offensive Security | Curious Mind";
+const isHome = Astro.url.pathname === "/";
+
+const personId = `${siteURL}/#person`;
+const websiteId = `${siteURL}/#website`;
+
+const structuredData = {
+	"@context": "https://schema.org",
+	"@graph": [
+		{
+			"@type": "Person",
+			"@id": personId,
+			name: "Pawan R",
+			url: `${siteURL}/`,
+			image: ogImage,
+			jobTitle: "Cybersecurity Professional",
+			description:
+				"Cybersecurity graduate and offensive security professional working across web, API, network, and cloud security.",
+			worksFor: {
+				"@type": "Organization",
+				name: "SecIQ Technologies LLP",
+			},
+			alumniOf: {
+				"@type": "CollegeOrUniversity",
+				name: "REVA University",
+			},
+			sameAs: ["https://www.linkedin.com/in/pawan-r/"],
+			knowsAbout: [
+				"Web Application Security",
+				"API Security",
+				"Network Security",
+				"Cloud Security",
+				"Vulnerability Assessment and Penetration Testing",
+			],
+		},
+		{
+			"@type": "WebSite",
+			"@id": websiteId,
+			url: `${siteURL}/`,
+			name: "Pawan R",
+			description: "Cybersecurity, VAPT and Offensive Security.",
+			inLanguage: "en",
+			publisher: { "@id": personId },
+		},
+		...(isHome
+			? [
+					{
+						"@type": "ProfilePage",
+						"@id": `${siteURL}/#profilepage`,
+						url: `${siteURL}/`,
+						name: "Pawan R — Offensive Security | Curious Mind",
+						inLanguage: "en",
+						isPartOf: { "@id": websiteId },
+						mainEntity: { "@id": personId },
+					},
+				]
+			: []),
+	],
+};
 ---
 
 <!doctype html>
@@ -26,6 +81,7 @@ const ogImageAlt = "Pawan R — Offensive Security | Curious Mind";
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="description" content={description} />
+		<meta name="author" content="Pawan R" />
 		<meta name="theme-color" content="#07111f" />
 		<link rel="icon" href="/favicon-p.svg" type="image/svg+xml" sizes="any" />
 		<link rel="icon" href="/favicon-p.ico" sizes="32x32" />
@@ -48,10 +104,13 @@ const ogImageAlt = "Pawan R — Offensive Security | Curious Mind";
 		<link rel="canonical" href={canonicalURL} />
 		<title>{title}</title>
 
+		<script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
 		<script is:inline src="/js/theme-init.js"></script>
 	</head>
 
 	<body>
+		<a class="skip-link" href="#main-content">Skip to content</a>
 		<slot />
 		<script is:inline src="/js/theme-menu.js"></script>
 	</body>
@@ -265,6 +324,44 @@ const ogImageAlt = "Pawan R — Offensive Security | Curious Mind";
 		border-radius: 4px;
 	}
 
+	#main-content {
+		scroll-margin-top: 88px;
+	}
+
+	.skip-link {
+		position: fixed;
+		top: 12px;
+		left: 12px;
+		z-index: 100;
+		padding: 12px 18px;
+		color: #ffffff;
+		background: var(--accent-strong);
+		border-radius: 8px;
+		font-family: var(--font-sans);
+		font-size: 0.95rem;
+		font-weight: 600;
+		text-decoration: none;
+		transform: translateY(calc(-100% - 24px));
+		transition: transform 0.15s ease;
+	}
+
+	.skip-link:focus,
+	.skip-link:focus-visible {
+		transform: translateY(0);
+	}
+
+	:root.theme-transition,
+	:root.theme-transition *,
+	:root.theme-transition *::before,
+	:root.theme-transition *::after {
+		transition:
+			background-color 0.15s ease,
+			color 0.15s ease,
+			border-color 0.15s ease,
+			fill 0.15s ease,
+			stroke 0.15s ease !important;
+	}
+
 	.theme-icon {
 		display: none;
 	}
@@ -285,6 +382,13 @@ const ogImageAlt = "Pawan R — Offensive Security | Curious Mind";
 	@media (prefers-reduced-motion: reduce) {
 		html {
 			scroll-behavior: auto;
+		}
+
+		:root.theme-transition,
+		:root.theme-transition *,
+		:root.theme-transition *::before,
+		:root.theme-transition *::after {
+			transition: none !important;
 		}
 
 		*,

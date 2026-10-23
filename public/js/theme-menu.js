@@ -3,6 +3,18 @@ const media = window.matchMedia("(prefers-color-scheme: dark)");
 const menu = document.getElementById("theme-menu");
 const toggle = menu ? menu.querySelector("summary") : null;
 const choices = Array.from(document.querySelectorAll("[data-theme-choice]"));
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+let transitionTimer = null;
+
+const startThemeTransition = () => {
+  if (reduceMotion.matches) return;
+
+  root.classList.add("theme-transition");
+  window.clearTimeout(transitionTimer);
+  transitionTimer = window.setTimeout(() => {
+    root.classList.remove("theme-transition");
+  }, 200);
+};
 
 const getMode = () => {
   try {
@@ -57,6 +69,7 @@ apply(getMode());
 
 choices.forEach((choice) => {
   choice.addEventListener("click", () => {
+    startThemeTransition();
     apply(choice.dataset.themeChoice || "system");
 
     if (menu instanceof HTMLDetailsElement) {
@@ -71,6 +84,7 @@ choices.forEach((choice) => {
 
 media.addEventListener("change", () => {
   if (getMode() === "system") {
+    startThemeTransition();
     apply("system");
   }
 });

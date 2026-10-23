@@ -1,10 +1,10 @@
 ---
 interface Props {
   activePage?: 'home' | 'journey' | 'writeups' | 'contact';
-  flow?: 'absolute' | 'static';
+  flow?: 'absolute' | 'static' | 'sticky';
 }
 
-const { activePage, flow = 'absolute' } = Astro.props;
+const { activePage, flow = 'sticky' } = Astro.props;
 
 const links = [
   { page: 'journey' as const, href: '/journey/', label: 'My Journey' },
@@ -13,7 +13,7 @@ const links = [
 ];
 ---
 
-<nav class:list={['navbar', flow === 'static' && 'navbar-static']} aria-label="Main Navigation">
+<nav class:list={['navbar', flow === 'static' && 'navbar-static', flow === 'sticky' && 'navbar-sticky']} aria-label="Main Navigation">
   <div class="nav-container">
     <a
       href="/"
@@ -81,6 +81,15 @@ const links = [
 
   .navbar-static {
     position: static;
+  }
+
+  .navbar-sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 30;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
   }
 
   .nav-container {

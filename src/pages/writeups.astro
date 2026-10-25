@@ -1,3 +1,4 @@
+
 ---
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
@@ -6,7 +7,7 @@ import WriteupSidebar from '../components/writeups/WriteupSidebar.astro';
 
 <Layout
   title="Write-ups | Pawan R"
-  description="Practical security assessments and technical write-ups covering web, API, network, and cloud security — documented step by step."
+  description="Explore practical cybersecurity write-ups, technical assessments, experiments, and perspectives documenting what I learn along the way."
 >
   <Navbar activePage="writeups" />
 
@@ -14,81 +15,65 @@ import WriteupSidebar from '../components/writeups/WriteupSidebar.astro';
     <WriteupSidebar />
 
     <section class="writeups-content">
-      <div class="writeups-header">
-        <p class="section-label">WRITEUPS</p>
+      <header class="writeups-header">
+        <p class="section-label">THE LIBRARY</p>
 
         <h1>
-          Security research,<br />
+          Research,<br />
           <span>documented.</span>
         </h1>
 
         <p class="intro">
-          A collection of practical security assessments, experiments,
-          and technical write-ups documenting what I learn along the way.
+          A growing collection of hands-on security research, technical
+          write-ups, experiments, and ideas. Each entry documents what I
+          explore, what I learn, and how I approach the problem.
         </p>
-      </div>
+      </header>
 
       <section class="writeup-section">
-        <p class="category-label">CYBERSECURITY</p>
+        <p class="category-label">EXPLORE</p>
 
-        <h2>Network Security</h2>
+        <h2>Browse the library</h2>
 
         <a
           class="writeup-card"
-          href="/writeups/ftp/"
+          href="/writeups/cybersecurity/"
         >
           <div class="card-content">
-            <p class="protocol">FTP</p>
+            <p class="protocol">01 / TECHNICAL RESEARCH</p>
 
-            <h3>FTP: From Misconfiguration to Compromise</h3>
+            <h3>Cybersecurity</h3>
 
             <p>
-              A systematic security assessment covering anonymous access,
-              file operation abuse, FTP-to-Apache exposure, PHP execution,
-              reverse shell access, and credential discovery.
+              Practical security assessments, network-service testing,
+              web and API security, cloud reviews, and technical
+              experiments — documented with methodology, findings,
+              and lessons learned.
             </p>
+
+            <span class="card-meta">Network Security · More topics to come</span>
           </div>
 
           <span class="arrow" aria-hidden="true">→</span>
         </a>
 
-        <a
-          class="writeup-card"
-          href="/writeups/nfs/"
-        >
+        <article class="writeup-card planned-card">
           <div class="card-content">
-            <p class="protocol">NFS</p>
+            <p class="protocol">02 / IDEAS &amp; REFLECTIONS</p>
 
-            <h3>NFS: From Misconfiguration to SSH Access</h3>
+            <h3>Perspectives</h3>
 
             <p>
-              A systematic security assessment covering NFS export
-              enumeration, writable home directory exposure, SSH
-              authentication material, and authenticated SSH access.
+              Essays, opinions, lessons, and ideas beyond technical
+              write-ups — covering technology, learning, building,
+              and topics worth thinking about.
             </p>
+
+            <span class="card-meta">Coming later</span>
           </div>
 
-          <span class="arrow" aria-hidden="true">→</span>
-        </a>
-
-        <a
-          class="writeup-card"
-          href="/writeups/smtp/"
-        >
-          <div class="card-content">
-            <p class="protocol">SMTP</p>
-
-            <h3>OpenSMTPD: From SMTP Exposure to Remote Code Execution</h3>
-
-            <p>
-              A systematic security assessment covering SMTP version
-              disclosure, recipient enumeration, CVE-2020-7247 validation,
-              remote command execution, and privileged shell access.
-            </p>
-          </div>
-
-          <span class="arrow" aria-hidden="true">→</span>
-        </a>
+          <span class="status" aria-label="Coming later">Planned</span>
+        </article>
       </section>
     </section>
   </main>
@@ -183,7 +168,7 @@ import WriteupSidebar from '../components/writeups/WriteupSidebar.astro';
       transform 0.2s ease;
   }
 
-  .writeup-card:hover {
+  a.writeup-card:hover {
     background: var(--bg-elevated-hover);
     border-color: var(--accent-line);
     transform: translateY(-2px);
@@ -212,6 +197,15 @@ import WriteupSidebar from '../components/writeups/WriteupSidebar.astro';
     line-height: 1.65;
   }
 
+  .card-meta {
+    display: block;
+    margin-top: 18px;
+    color: var(--text-secondary);
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
   .arrow {
     flex-shrink: 0;
     color: var(--accent);
@@ -222,6 +216,22 @@ import WriteupSidebar from '../components/writeups/WriteupSidebar.astro';
 
   .writeup-card:hover .arrow {
     transform: translateX(4px);
+  }
+
+  .planned-card {
+    opacity: 0.82;
+    cursor: default;
+  }
+
+  .status {
+    flex-shrink: 0;
+    padding: 6px 10px;
+    color: var(--text-secondary);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    border: 1px solid var(--line);
+    border-radius: 5px;
   }
 
   @media (max-width: 900px) {
@@ -248,6 +258,10 @@ import WriteupSidebar from '../components/writeups/WriteupSidebar.astro';
 
     .writeup-card p:not(.protocol) {
       font-size: 0.95rem;
+    }
+
+    .status {
+      font-size: 0.7rem;
     }
   }
 </style>

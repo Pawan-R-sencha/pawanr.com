@@ -1,22 +1,25 @@
+
 ---
 import { getCollection, render } from 'astro:content';
 import WriteupLayout from '../../components/writeups/WriteupLayout.astro';
-import { getWriteupNeighbors } from '../../lib/writeups';
+import { getWriteupNeighbors, getWriteupUrl } from '../../lib/writeups';
 
 export async function getStaticPaths() {
   const writeups = await getCollection('writeups');
 
   return writeups
     .filter((writeup) => !writeup.data.draft)
-    .filter((writeup) => !['ftp', 'nfs'].includes(writeup.data.slug))
-    .map((writeup) => ({
-      params: {
-        slug: writeup.data.slug,
-      },
-      props: {
-        writeup,
-      },
-    }));
+    .map((writeup) => {
+      const url = getWriteupUrl(writeup);
+      const slug = url
+        .replace(/^\/writeups\//, '')
+        .replace(/\/$/, '');
+
+      return {
+        params: { slug },
+        props: { writeup },
+      };
+    });
 }
 
 const { writeup } = Astro.props;

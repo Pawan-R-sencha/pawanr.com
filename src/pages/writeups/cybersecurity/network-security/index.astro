@@ -40,65 +40,77 @@ import WriteupSidebar from '../../../../components/writeups/WriteupSidebar.astro
 
       <section class="writeup-section">
         <p class="category-label">NETWORK SECURITY</p>
-
         <h2>Technical write-ups</h2>
 
+        <!-- FTP -->
         <a
           class="writeup-card"
           href="/writeups/cybersecurity/network-security/ftp/"
         >
           <div class="card-content">
             <p class="protocol">FTP</p>
-
             <h3>FTP: From Misconfiguration to Compromise</h3>
-
             <p>
               A systematic security assessment covering anonymous access,
               file operation abuse, FTP-to-Apache exposure, PHP execution,
               reverse shell access, and credential discovery.
             </p>
           </div>
-
           <span class="arrow" aria-hidden="true">→</span>
         </a>
 
+        <!-- NFS -->
         <a
           class="writeup-card"
           href="/writeups/cybersecurity/network-security/nfs/"
         >
           <div class="card-content">
             <p class="protocol">NFS</p>
-
             <h3>NFS: From Misconfiguration to SSH Access</h3>
-
             <p>
               A systematic security assessment covering NFS export
               enumeration, writable home directory exposure, SSH
               authentication material, and authenticated SSH access.
             </p>
           </div>
-
           <span class="arrow" aria-hidden="true">→</span>
         </a>
 
+        <!-- SMTP -->
         <a
           class="writeup-card"
           href="/writeups/cybersecurity/network-security/smtp/"
         >
           <div class="card-content">
             <p class="protocol">SMTP</p>
-
             <h3>OpenSMTPD: From SMTP Exposure to Remote Code Execution</h3>
-
             <p>
               A systematic security assessment covering SMTP version
               disclosure, recipient enumeration, CVE-2020-7247 validation,
               remote command execution, and privileged shell access.
             </p>
           </div>
-
           <span class="arrow" aria-hidden="true">→</span>
         </a>
+
+        <!-- MySQL -->
+        <a
+          class="writeup-card"
+          href="/writeups/cybersecurity/network-security/mysql/"
+        >
+          <div class="card-content">
+            <p class="protocol">MYSQL</p>
+            <h3>MySQL: Security Assessment</h3>
+            <p>
+              A practical security assessment covering MySQL service
+              discovery, credential testing, remote authentication,
+              database enumeration, privilege analysis, and server-side
+              file access restrictions.
+            </p>
+          </div>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+
       </section>
     </section>
   </main>

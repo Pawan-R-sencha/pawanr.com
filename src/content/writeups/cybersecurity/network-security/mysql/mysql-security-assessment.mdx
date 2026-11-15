@@ -1,0 +1,211 @@
+---
+title: "MySQL: From Footprinting to Privilege Analysis"
+description: "A systematic security assessment of an isolated MySQL environment, covering service discovery, remote authentication, credential testing, database enumeration, privilege analysis, and server-side file operation restrictions."
+slug: mysql
+category: "cybersecurity"
+subcategory: "network-security"
+protocol: "MySQL"
+tags:
+  - MySQL
+  - Database Security
+  - Credential Brute Force
+  - Privilege Enumeration
+  - FILE Privilege
+  - information_schema
+status: "complete"
+pubDate: 2026-11-15
+draft: false
+---
+ 
+# Overview
+ 
+Not every assessment ends in a shell. This one is less about breaking something and more about figuring out exactly how far a single exposed database account can actually take an attacker — and, just as importantly, where it stops.
+ 
+The lab centers on a remotely reachable MySQL server. The approach was straightforward on paper: find the service, try to get valid credentials onto it, see what the resulting account can actually touch, and then push specifically at the boundary between "database access" and "operating system access." That last part is where this write-up spends most of its time, because it's also where a lot of real-world misunderstandings about MySQL security tend to live — people assume a compromised DB account is basically a shell waiting to happen, and that's not always true.
+ 
+### Assessment Disclaimer
+ 
+This assessment was carried out entirely inside a self-managed, isolated virtual lab built specifically for this exercise. Every system, account, credential, and piece of data involved was created for the lab — nothing here touched a third-party system or a production environment. The techniques described should only ever be run against systems you have explicit authorization to test.
+ 
+## Lab Environment
+ 
+The lab ran on two virtual machines: Kali Linux as the attacker and Ubuntu as the target, both sitting on an isolated network with no path out to anything real.
+ 
+**Target service:**
+ 
+```text
+3306/tcp → MySQL
+```
+ 
+**MySQL server details:**
+ 
+```text
+MySQL Community Server 8.4.11
+Operating System: Ubuntu 26.04.1 LTS
+Architecture: ARM64
+```
+ 
+**Target host:**
+ 
+```text
+demo.pawanr.local
+```
+ 
+**Wordlists provided for the exercise:**
+ 
+```text
+mysql-users.txt      — username wordlist
+mysql-passwords.txt  — password wordlist
+```
+ 
+The MySQL service was deliberately configured to accept remote connections from the isolated lab network, and a dedicated database account was created ahead of time with limited access to a single application database.
+ 
+**What the assessment examined:**
+ 
+- **Remote accessibility** — whether the MySQL service could be reached at all from the attacker machine
+- **Authentication** — whether valid credentials could be found through controlled password testing
+- **Database enumeration** — what databases, tables, and records the discovered account could actually see
+- **Privilege analysis** — exactly what operations that account was authorized to perform
+- **File operations** — how MySQL's `FILE` privilege, `secure_file_priv`, and the underlying Linux filesystem permissions interact to control (or block) server-side file access
+### Objective
+ 
+Determine how much access could realistically be obtained through an exposed MySQL service, understand the effective permissions tied to whatever account got discovered, and map out the actual security boundary between database-level access and server-side file operations.
+ 
+---
+ 
+# 01 — Reconnaissance & Service Enumeration
+ 
+With the scope narrowed to MySQL from the start, the scan went straight at port 3306 rather than sweeping the whole host:
+ 
+```bash
+nmap -sV -sC demo.pawanr.local -p 3306
+```
+ 
+**Nmap Results**
+ 
+![Nmap version and script scan against port 3306 showing MySQL 8.4.11, protocol details, and the caching_sha2_password auth plugin](/images/writeups/mysql/nmap-scan-results.png)
+ 
+### Initial Observations
+ 
+- `3306/tcp` — open, running **MySQL 8.4.11-0ubuntu0.26.04.1**
+- Nmap's `mysql-info` script pulled back a surprising amount on its own: protocol version, thread ID, the server's capability flags, and the configured authentication plugin (`caching_sha2_password`)
+- A TLS certificate was also exposed via `ssl-cert`, confirming the service supported encrypted connections even though nothing forced a client to use them
+Between the banner and the script output, there was already enough here to start building a credential-testing plan without a single login attempt yet.
+ 
+---
+ 
+# 02 — User Enumeration Using a Custom Wordlist
+ 
+With the service confirmed reachable, the next step was straightforward credential testing using the username and password lists supplied for the lab.
+ 
+```bash
+hydra -L ~/mysql-users.txt -P ~/mysql-passwords.txt -s 3306 -t 1 -V demo.pawanr.local mysql
+```
+ 
+**Hydra Brute-Force Results**
+ 
+![Hydra output attempting multiple username and password combinations against MySQL on port 3306, ending in one valid credential pair found](/images/writeups/mysql/hydra-bruteforce-results.png)
+ 
+Hydra worked through the combinations methodically — `admin`, `root`, `robert`, and `test` were all tried against the password list — and landed on a single valid pair: `robert` / `LabPass123`.
+ 
+### Security Observation
+ 
+One valid hit out of a relatively short wordlist is a reminder of how little margin for error weak or reused passwords actually leave. The account wasn't `root` and wasn't obviously privileged by name, which made it a good candidate for the next question: what can this specific account actually do?
+ 
+---
+ 
+# 03 — Initial Access
+ 
+With working credentials in hand, the next step was logging in directly and seeing what the account could reach.
+ 
+```bash
+mysql --ssl-verify-server-cert=0 -h 192.168.64.12 -u robert -p
+```
+ 
+```sql
+SELECT * FROM customer_portal.customers;
+```
+ 
+**Authenticated MySQL Session — Customer Data Access**
+ 
+![MySQL client session authenticated as robert, listing databases and querying customer records from customer_portal.customers](/images/writeups/mysql/mysql-login-customer-data.png)
+ 
+The login succeeded cleanly as `robert@192.168.64.10`, and `SHOW DATABASES` returned three schemas: `customer_portal`, `information_schema`, and `performance_schema`. Querying `customer_portal.customers` returned real-looking customer records — first names, last names, and email addresses — confirming the account had genuine read access to application data, not just a login.
+ 
+### Security Observation
+ 
+This is the point where an exposed, remotely-reachable database with a weak password stops being a theoretical risk and becomes actual data exposure. A single cracked credential pair handed over direct read access to customer records, with no further exploitation required.
+ 
+---
+ 
+# 04 — Privilege Enumeration and File Operation Checks
+ 
+Access to customer data raised the obvious next question: how far does this account's privilege actually extend? Rather than guessing, the privileges were pulled directly from `information_schema`.
+ 
+```sql
+SELECT * FROM information_schema.USER_PRIVILEGES WHERE GRANTEE LIKE "'robert'%";
+SELECT * FROM information_schema.SCHEMA_PRIVILEGES WHERE GRANTEE LIKE '%robert%';
+```
+ 
+**Privilege Enumeration Output**
+ 
+![information_schema queries showing robert's global privilege as USAGE only, with SELECT scoped to the customer_portal schema](/images/writeups/mysql/privilege-enumeration-file-restriction.png)
+ 
+The results were clean and limited: `robert`'s global privilege was just `USAGE` (effectively "can log in, nothing more at the global level"), and the schema-level grant was a single `SELECT` on `customer_portal`. No `INSERT`, `UPDATE`, `DELETE`, or administrative grants anywhere.
+ 
+To test the boundary between database access and the underlying filesystem, a server-side file write was attempted next:
+ 
+```sql
+SELECT 'mysql-lab-test' INTO OUTFILE '/var/lib/mysql-files/robert-test.txt';
+```
+ 
+This was rejected outright:
+ 
+```text
+ERROR 1227 (42000): Access denied; you need (at least one) the FILE privilege(s) for this operation
+```
+ 
+Checking `secure_file_priv` confirmed the server was also restricting file operations to a single, non-sensitive directory even for accounts that did hold the privilege:
+ 
+```sql
+SHOW VARIABLES LIKE 'secure_file_priv';
+```
+ 
+```text
+secure_file_priv = /var/lib/mysql-files/
+```
+ 
+### Security Observation
+ 
+This is the part of MySQL security that's easy to get wrong in either direction. Having database access — even access to real customer data — does not automatically mean an attacker can write to, or read from, arbitrary files on the host. `robert` simply didn't hold the global `FILE` privilege, so the `INTO OUTFILE` attempt was denied before `secure_file_priv` was even relevant. And even for an account that *did* have `FILE`, `secure_file_priv` would have confined any file operation to one designated directory rather than the filesystem at large. In this lab, both layers were configured correctly, and together they stopped a compromised application-level account from turning into filesystem or OS-level access.
+ 
+---
+ 
+# Findings Summary
+ 
+| # | Finding | Severity | Evidence |
+|---|---|---|---|
+| F01 | Weak, brute-forceable MySQL credential (`robert` / `LabPass123`) permitted unauthorized remote authentication, with no account lockout or rate limiting in place to slow the attempt. The resulting session had direct `SELECT` access to real customer records (names, emails) in `customer_portal.customers`. | High | Hydra recovered a valid credential pair against the service on 3306; the authenticated session read live customer data |
+ 
+**Overall risk before remediation:** High — driven entirely by the weak credential and the lack of any control slowing down the brute-force attempt, which in turn exposed customer data. The boundary around file and OS-level access held up correctly and isn't counted as a finding — it's covered as a validated control in Section 04.
+ 
+---
+ 
+# Remediation
+ 
+- **Enforce strong, unique credentials** for all database accounts, and rotate the exposed `robert` password immediately
+- **Add account lockout or rate limiting** against repeated failed authentication attempts to blunt brute-force attacks like the one used here
+- **Restrict remote MySQL access** to specific, known hosts or an internal management network rather than leaving 3306 broadly reachable
+- **Apply least privilege consistently** — the `SELECT`-only grant on `customer_portal` was a good example of this working correctly; extend the same discipline to every account
+- **Keep `FILE` ungranted by default** for application accounts, and leave `secure_file_priv` scoped to a non-sensitive directory, as it already was here
+- **Enforce TLS for client connections** rather than just offering it, since the server presented a certificate but didn't appear to require encrypted sessions
+- **Monitor authentication activity** for repeated failed logins and unusual query patterns against sensitive tables like `customers`
+---
+ 
+# Lessons Learned
+ 
+This assessment ended up being more valuable than a straightforward compromise would have been, honestly. It's easy to assume that getting a valid database login is "game over," but working through the actual privilege boundaries here showed how much nuance sits between "has a valid account" and "has access to everything on the box."
+ 
+Digging into `information_schema.USER_PRIVILEGES` and `SCHEMA_PRIVILEGES` directly, instead of just assuming what an account could do, made the access model concrete rather than theoretical. And deliberately trying the `INTO OUTFILE` write — expecting it to either succeed or fail for a specific, explainable reason — was a good way to actually understand how `FILE` and `secure_file_priv` work together, rather than just knowing they exist.
+ 
+From a VAPT perspective, this is the kind of finding that's easy to undersell in a report: no shell, no RCE, nothing dramatic. But a weak credential exposing real customer data is still a serious issue on its own, and knowing precisely where the access stopped — and why — is just as important to document as knowing where it didn't.
